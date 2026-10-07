@@ -1,0 +1,270 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mock Car Simulator</title><link rel="stylesheet" href="style.css">
+<style>
+main{max-width:1250px}
+.layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(300px,1fr);gap:16px}
+@media(max-width:900px){.layout{grid-template-columns:1fr}}
+.car{background:#0b0e14;border-radius:16px;padding:12px;color:#eaf0ff}
+.cluster{background:#05070b;border:2px solid #222b3d;border-radius:12px;padding:10px 14px;position:relative;height:190px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.cluster.off{filter:brightness(.12)}
+.spd{text-align:center}.spd .n{font-size:56px;font-weight:700;line-height:1;font-family:Consolas,monospace}.spd small{color:#8aa}
+.gear{font-size:13px;display:flex;gap:6px;justify-content:center;margin-top:6px}.gear b{padding:2px 7px;border-radius:5px;background:#1a2233;color:#789}.gear b.on{background:#3b82f6;color:#fff}
+.mid{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px}
+.chips{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;min-height:26px}
+.chip{font-size:11px;padding:3px 7px;border-radius:5px;background:#1a2233;color:#3a4660;font-weight:700}
+.chip.red{background:#dc2626;color:#fff}.chip.amb{background:#f59e0b;color:#000}
+.arrows{display:flex;gap:70px;font-size:30px;color:#1f2a40}.arrows .on{color:#22c55e;animation:bl .7s steps(1) infinite}
+@keyframes bl{50%{opacity:.1}}
+.fuel{width:100%;max-width:200px;font-size:11px;color:#8aa}.bar{height:9px;background:#1a2233;border-radius:5px;overflow:hidden}.bar i{display:block;height:100%;background:#22c55e}
+.ivi{margin-top:10px;background:#000;border:2px solid #222b3d;border-radius:12px;height:370px;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.ivi.off{background:#000}.ivi.off>*{display:none}
+.stat{display:flex;justify-content:space-between;padding:5px 12px;font-size:13px;background:#0f1522;color:#bcd}
+.scr{flex:1;padding:12px;overflow:auto;background:#101827;color:#eaf0ff}
+.scr.day{background:#eef2fa;color:#111}
+.scr.night{background:#0b1020;color:#eaf0ff}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tile{background:#1f2a44;color:#fff;border:0;border-radius:12px;padding:18px 6px;font-size:15px;cursor:pointer;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:100%}
+.scr.day .tile{background:#c9d6f2;color:#111}
+.dock{display:flex;justify-content:space-around;background:#0f1522;padding:6px}
+.dock button{background:none;border:0;color:#9bb;font-size:12px;cursor:pointer;padding:4px 8px;border-radius:6px}.dock button.on{background:#2563eb;color:#fff}
+.k{background:#2a3858;color:#fff;border:0;border-radius:8px;padding:8px 12px;margin:3px;cursor:pointer;font-size:15px}
+.k.go{background:#16a34a}.k.no{background:#dc2626}.k:disabled{opacity:.35;cursor:not-allowed}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0}
+.scr input[type=text]{padding:8px;border-radius:6px;border:1px solid #567;width:100%}
+.overlay{position:absolute;inset:0;background:rgba(0,0,0,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;z-index:5;text-align:center}
+.cam{background:linear-gradient(#334 0 40%,#556 40% 100%);width:100%;height:100%;position:relative}
+.cam:before{content:"";position:absolute;left:15%;right:15%;bottom:0;height:70%;border-left:4px solid #22c55e;border-right:4px solid #22c55e;transform:perspective(200px) rotateX(35deg);border-top:0}
+.cam b{position:absolute;top:10px;left:10px;background:#dc2626;padding:2px 8px;border-radius:4px;font-size:12px}
+.tabs{display:flex;gap:4px;flex-wrap:wrap}.tabs button{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:6px 10px;border-radius:8px;cursor:pointer;font-size:14px}.tabs button.on{background:var(--brand);color:#fff}
+.pane{display:none}.pane.on{display:block}
+.sig label{display:block;font-size:14px;margin-top:8px;font-weight:600}.sig input[type=range]{width:100%}.sig select,.sig button{font-size:14px;padding:5px 8px}
+.log{background:#05070b;color:#9fe3a1;font-family:Consolas,monospace;font-size:12px;height:190px;overflow:auto;padding:8px;border-radius:8px;white-space:pre-wrap}
+.log.lc{color:#e5e7eb}
+.bugrow{display:flex;gap:8px;align-items:flex-start;border-bottom:1px solid var(--line);padding:6px 0;font-size:14px}
+.bugrow.found{background:rgba(22,163,74,.15)}.bugrow.miss{background:rgba(220,38,38,.12)}
+.bugrow button{white-space:nowrap;font-size:12px;padding:3px 7px}
+#score{font-size:22px;font-weight:700}
+</style></head><body><main>
+<h1>2. Mock Car – practice like a real tester</h1>
+<div class="tip"><b>How to use:</b> (1) Read the <b>Requirements</b> tab (what is <i>supposed</i> to happen). (2) Use the <b>Signal Simulator</b> to switch the car on, change speed, gear, doors… (3) Watch the <b>cluster</b> (top) and <b>IVI screen</b> (bottom). (4) Whenever actual ≠ expected, you found a defect. (5) Click the <b>Bug Hunt</b> tab to check your findings. Try to find all 22!</div>
+<div class="row"><b>Software build:</b>
+<select id="build" onchange="setBuild()"><option value="bad">Build 0.9 (has hidden defects) – hunt here</option><option value="good">Build 1.0 (fixed, correct) – compare here</option></select>
+<button class="btn alt" onclick="location.reload()">Reset everything</button></div>
+<div class="layout">
+<div class="car">
+ <div class="cluster off" id="cluster">
+  <div class="spd"><div class="n" id="spdn">0</div><small>km/h</small><div class="gear" id="gear"></div></div>
+  <div class="mid"><div class="arrows"><span id="tl">◀</span><span id="tr">▶</span></div><div class="chips" id="chips"></div>
+   <div class="fuel">FUEL <span id="fuelp"></span><div class="bar"><i id="fuelb"></i></div></div></div>
+  <div style="text-align:right"><div id="clk" style="font-size:20px;font-family:Consolas,monospace"></div><small style="color:#8aa" id="odo">Ignition OFF</small></div>
+ </div>
+ <div class="ivi off" id="ivi">
+  <div class="stat"><span id="stl"></span><span id="stc"></span><span id="str"></span></div>
+  <div class="scr" id="scr"></div>
+  <div class="dock" id="dock"></div>
+  <div id="ovl"></div>
+ </div>
+ <div class="row" style="justify-content:center;margin-top:8px"><span style="color:#9ab;font-size:13px">Steering wheel buttons:</span>
+  <button class="k" onclick="vol(-1)">🔉 Vol −</button><button class="k" onclick="vol(1)">🔊 Vol +</button><button class="k" onclick="toggleMute()">🔇 Mute</button></div>
+</div>
+
+<div>
+ <div class="tabs" id="tabs"></div>
+ <div class="card">
+ <div class="pane on" id="p-sig"><div class="sig">
+  <b>Signal Simulator</b> <small>(a mock of tools like CANoe – it pretends to be the car)</small>
+  <label>Ignition</label><button class="btn" id="ignb" onclick="setIgn()">Turn ON</button>
+  <label>Speed: <span id="v-spd">0</span> km/h</label><input type="range" id="s-spd" min="0" max="200" value="0" oninput="sig('speed',+this.value)">
+  <label>Gear</label><select id="s-gear" onchange="sig('gear',this.value)"><option>P</option><option>R</option><option>N</option><option>D</option></select>
+  <label>Fuel: <span id="v-fuel">60</span> %</label><input type="range" id="s-fuel" min="0" max="100" value="60" oninput="sig('fuel',+this.value)">
+  <label>Doors</label><select id="s-door" onchange="sig('door',this.value==='open')"><option value="closed">All closed</option><option value="open">Driver door OPEN</option></select>
+  <label>Driver seatbelt</label><select id="s-belt" onchange="sig('belt',this.value==='on')"><option value="on">Fastened</option><option value="off">NOT fastened</option></select>
+  <label>Turn lever</label><select id="s-turn" onchange="sig('turn',this.value)"><option value="off">Off</option><option value="left">Left</option><option value="right">Right</option></select>
+  <label>Clock hour: <span id="v-hr">15</span>:30</label><input type="range" id="s-hr" min="0" max="23" value="15" oninput="sig('hour',+this.value)">
+  <label>Phone events</label><button onclick="incoming()">📞 Incoming call</button> <button onclick="sig('btlost')">Phone goes out of range</button>
+ </div></div>
+ <div class="pane" id="p-req"><b>Requirements (the "expected" behaviour)</b>
+  <table style="font-size:13px"><tr><th>ID</th><th>Requirement</th></tr>
+  <tr><td>R1</td><td>Cluster speed = signal speed exactly.</td></tr>
+  <tr><td>R2</td><td>Gear display shows P, R, N, D exactly as the gear signal.</td></tr>
+  <tr><td>R3</td><td>Seatbelt warning ON when belt is not fastened and speed &gt; 10. It turns OFF as soon as belt is fastened.</td></tr>
+  <tr><td>R4</td><td>Low fuel warning when fuel &lt; 15 %.</td></tr>
+  <tr><td>R5</td><td>Door-open warning shows whenever a door is open and ignition is ON, also while driving.</td></tr>
+  <tr><td>R6</td><td>Left lever → left arrow blinks. Right lever → right arrow blinks.</td></tr>
+  <tr><td>R7</td><td>Reverse gear → rear camera opens every time. Leaving reverse closes it.</td></tr>
+  <tr><td>R8</td><td>Ignition OFF → both cluster and centre screen switch off.</td></tr>
+  <tr><td>R9</td><td>At ignition ON all cluster lamps light for about 1.5 s (bulb check). This is normal.</td></tr>
+  <tr><td>R10</td><td>Clock uses 12-hour format with AM/PM (e.g. 3:30 PM).</td></tr>
+  <tr><td>R11</td><td>Volume range 0–30. Display shows the real volume. Mute silences; un-mute restores the earlier volume.</td></tr>
+  <tr><td>R12</td><td>Media: next on the last track goes to track 1; previous on track 1 goes to the last. Time format m:ss (seconds 00–59).</td></tr>
+  <tr><td>R13</td><td>Incoming call pauses the media.</td></tr>
+  <tr><td>R14</td><td>Bluetooth OFF → status "Not connected", phone dial disabled.</td></tr>
+  <tr><td>R15</td><td>Call button is disabled if the number is empty.</td></tr>
+  <tr><td>R16</td><td>Navigation: empty destination → message "Please enter a destination". ETA = current time + trip time.</td></tr>
+  <tr><td>R17</td><td>Navigation text entry is locked when speed &gt; 5 km/h ("Not available while driving").</td></tr>
+  <tr><td>R18</td><td>Any app opens within 1 second.</td></tr>
+  <tr><td>R19</td><td>Climate: 16–28 °C. Switching to °F converts the value (22 °C = 72 °F).</td></tr>
+  <tr><td>R20</td><td>Night theme: text must be clearly readable.</td></tr>
+  <tr><td>R21</td><td>German language: ALL labels translated and fully visible.</td></tr>
+  </table></div>
+ <div class="pane" id="p-can"><b>CAN trace</b> <small>(fake IDs, only for learning)</small>
+  <div class="log" id="can" style="height:300px"></div>
+  <small>Example: <code>0x3F0 [00 3C]</code> → ID 0x3F0 = speed, data 0x003C = 60 km/h. A DBC file is what tells you this.</small></div>
+ <div class="pane" id="p-log"><b>Logcat-style log</b> (what a developer would read)
+  <div class="log lc" id="lc" style="height:300px"></div></div>
+ <div class="pane" id="p-bug"><b>Bug Hunt</b> – tick what you think are defects.<br>
+  Score: <span id="score">0 / 22</span> &nbsp; <small id="wrong"></small>
+  <div class="row"><button class="btn alt" onclick="revealAll()">Give up – show all answers</button></div>
+  <div id="bugs"></div></div>
+ </div>
+</div>
+</div>
+</main>
+<script src="nav.js"></script>
+<script>
+var S={ign:false,speed:0,gear:'P',fuel:60,door:false,belt:true,turn:'off',hour:15,vol:12,preMute:12,muted:false,bt:true,track:0,play:false,t:0,temp:22,unit:'C',fan:2,ac:true,night:false,lang:'en',app:'home',camN:0,beltLatch:false,call:false,digits:'',dest:'',navMsg:'',navRes:null,bulb:false,everOn:false,bad:true,cam:false,found:{},wrong:0};
+var TRACKS=['Road Trip Song','Morning Drive','Night Highway'];
+var T={en:{home:'Home',media:'Media',phone:'Phone',nav:'Navigation',climate:'Climate',set:'Settings'},de:{home:'Start',media:'Medien',phone:'Telefon',nav:'Navigation',climate:'Klima',set:'Einstellungen'}};
+function tr(k){var s=T[S.lang][k];if(S.bad&&S.lang==='de'){if(k==='climate')return 'Climate';}return s}
+function $(i){return document.getElementById(i)}
+function hex(n,l){return n.toString(16).toUpperCase().padStart(l,'0')}
+var ST=Date.now();
+function now(){return ((Date.now()-ST)/1000).toFixed(1).padStart(6,' ')}
+function can(id,name,bytes){var e=$('can');e.textContent+=now()+'  0x'+id+'  '+bytes+'   '+name+'\n';e.scrollTop=1e9}
+function log(l,tag,msg){var e=$('lc');e.textContent+=now()+' '+l+'/'+tag+': '+msg+'\n';e.scrollTop=1e9}
+function setBuild(){S.bad=$('build').value==='bad';render();cluster();log('I','Build','Switched to '+(S.bad?'0.9':'1.0'))}
+
+/* ---------- BUGS ---------- */
+var B=[
+{id:1,a:'Cluster',t:'Cluster speed is higher than the real speed at high speed (e.g. 130 shows 138).',h:'Set speed above 120 and compare with the slider.',how:'R1. Speed > 120 → displayed +8.',sev:'Critical'},
+{id:2,a:'Cluster',t:'Gear N is displayed as D.',h:'Try each gear in the list.',how:'R2. Choose N → "D" lights up.',sev:'Critical'},
+{id:3,a:'Cluster',t:'Seatbelt warning stays ON after fastening the belt.',h:'Drive, unfasten, then fasten again.',how:'R3. Speed 30, belt NOT fastened, then Fastened → lamp stays (until ignition OFF/ON).',sev:'Major'},
+{id:4,a:'Cluster',t:'Low fuel warning does not appear at 10 % fuel.',h:'Move the fuel slider slowly down.',how:'R4. Fuel 10 → no lamp; lamp only below 5.',sev:'Major'},
+{id:5,a:'Cluster',t:'Left lever blinks the right arrow (and the opposite).',h:'Try both levers.',how:'R6. Left → right arrow blinks.',sev:'Critical'},
+{id:6,a:'Cluster',t:'Door-open warning disappears when the car starts moving.',h:'Open the door, then raise the speed.',how:'R5. Door open + speed > 5 → icon vanishes.',sev:'Critical'},
+{id:7,a:'Cluster/IVI',t:'Rear camera appears only the first time reverse is selected.',h:'Select R, leave, select R again.',how:'R7. 2nd time in R → no camera.',sev:'Critical'},
+{id:8,a:'IVI',t:'Centre screen stays on after ignition OFF.',h:'Turn the ignition off.',how:'R8. Cluster off but IVI on.',sev:'Major'},
+{id:9,a:'Cluster',t:'Clock shows "15:30 PM" (24-hour number with AM/PM).',h:'Look at the clock at the default hour.',how:'R10. Hour 15 → "15:30 PM" instead of "3:30 PM".',sev:'Minor'},
+{id:10,a:'IVI',t:'Volume shows 31 at the maximum.',h:'Press Vol + many times.',how:'R11. At 30 the display shows 31.',sev:'Minor'},
+{id:11,a:'IVI',t:'After un-mute the volume is 0 (the old volume is lost).',h:'Mute then un-mute.',how:'R11. Un-mute sets volume to 0.',sev:'Major'},
+{id:12,a:'IVI',t:'"Next" on the last track shows "undefined".',h:'Press Next 3 times in Media.',how:'R12. Next at track 3 → index 4, "undefined".',sev:'Major'},
+{id:13,a:'IVI',t:'Song time shows wrong seconds such as 0:75.',h:'Play a song and wait over one minute.',how:'R12. Seconds go past 59 (shows 0:60…0:99).',sev:'Minor'},
+{id:14,a:'IVI',t:'Media keeps playing when an incoming call arrives.',h:'Play music, then use "Incoming call".',how:'R13. Music not paused.',sev:'Major'},
+{id:15,a:'IVI',t:'Bluetooth OFF still shows "Connected".',h:'Phone app → toggle Bluetooth.',how:'R14. Status unchanged after OFF.',sev:'Major'},
+{id:16,a:'IVI',t:'Call button works with an empty number ("Calling…").',h:'Press Call without typing.',how:'R15. Negative test.',sev:'Minor'},
+{id:17,a:'IVI',t:'Navigation start with empty destination shows a "0 km" route.',h:'Press Start with an empty box.',how:'R16. No error message.',sev:'Major'},
+{id:18,a:'IVI',t:'Navigation ETA is earlier than the current time.',h:'Enter any destination and compare ETA with clock.',how:'R16. ETA = now − 25 min.',sev:'Major'},
+{id:19,a:'IVI',t:'Destination text box is still usable while driving.',h:'Set speed 60 then open Navigation.',how:'R17. Driver distraction rule not enforced.',sev:'Critical'},
+{id:20,a:'IVI',t:'Navigation app opens after about 3 seconds with a blank screen and no loading indicator.',h:'Tap Navigation and count.',how:'R18. 3000 ms delay, no spinner.',sev:'Major'},
+{id:21,a:'IVI',t:'Temperature can go below 16 °C, and the °F switch only changes the label (22 °F).',h:'Climate: press ➖ many times; switch unit.',how:'R19. Min is 14; unit just relabels.',sev:'Major'},
+{id:22,a:'IVI',t:'In Night mode the Settings text is dark on dark and unreadable; in German "Climate" is not translated and "Einstellungen" is cut off.',h:'Settings → Night mode. Then Language → Deutsch and look at Home.',how:'R20/R21. Contrast + translation + truncation (three small issues; count it as one).',sev:'Minor'}
+];
+var D=[
+{t:'Warning lamps all light for about 1.5 seconds when the ignition is turned ON.',why:'Expected! It is the "bulb check" (R9). Not a bug.'},
+{t:'Speed shows 0 when gear is P and the speed slider is 0.',why:'Correct behaviour.'},
+{t:'The rear camera shows guide lines.',why:'Normal feature; guide lines help parking.'},
+{t:'Fuel bar changes colour at low level.',why:'Fine – a visual hint.'},
+{t:'The CAN trace shows IDs in hexadecimal (0x3F0).',why:'Normal; CAN IDs are normally shown in hex.'}
+];
+var LIST=B.map(function(b){return {k:'b'+b.id,t:b.t,bug:b}}).concat(D.map(function(d,i){return {k:'d'+i,t:d.t,dec:d}}));
+LIST.sort(function(a,b){return (a.t.length*7%13)-(b.t.length*7%13)});
+
+function bugHunt(){var h='';LIST.forEach(function(x){var f=S.found[x.k];h+='<div class="bugrow '+(f==='ok'?'found':f==='no'?'miss':'')+'"><div style="flex:1">'+x.t+(x.bug&&f==='ok'?'<br><small><b>Where:</b> '+x.bug.a+' · <b>Suggested severity:</b> '+x.bug.sev+'<br><b>Steps:</b> '+x.bug.how+'</small>':'')+(x.dec&&f==='no'?'<br><small>'+x.dec.why+'</small>':'')+'</div>'+(f?'':'<button class="btn" onclick="pick(\''+x.k+'\')">It is a bug</button>'+(x.bug?'<button class="btn alt" onclick="alert(\'Hint: \'+B['+(x.bug.id-1)+'].h)">Hint</button>':''))+'</div>'});$('bugs').innerHTML=h;var n=Object.keys(S.found).filter(function(k){return S.found[k]==='ok'}).length;$('score').textContent=n+' / 22';$('wrong').textContent=S.wrong?('Wrong guesses: '+S.wrong):''}
+function pick(k){var x=LIST.filter(function(y){return y.k===k})[0];if(x.bug){S.found[k]='ok'}else{S.found[k]='no';S.wrong++}bugHunt();}
+function revealAll(){LIST.forEach(function(x){if(!S.found[x.k])S.found[x.k]=x.bug?'ok':'no'});bugHunt()}
+function bug(){return S.bad}
+
+/* ---------- SIGNALS ---------- */
+function sig(n,v){
+ if(!S.ign&&n!=='hour'&&n!=='btlost'){ $('v-spd').textContent=S.speed; }
+ if(n==='speed'){S.speed=v;$('v-spd').textContent=v;can('3F0','VehicleSpeed','['+hex(v>>8,2)+' '+hex(v&255,2)+']');log('D','VehicleHal','speed='+v)}
+ if(n==='gear'){var pg=S.gear;S.gear=v;can('2A0','GearPosition','['+'0'+{P:0,R:1,N:2,D:3}[v]+']');log('D','VehicleHal','gear='+v);
+   if(v==='R'&&S.ign){if(!(bug()&&S.camN>=1)){S.cam=true;S.camN++;log('I','CameraSvc','rear camera start')}else{S.camN++;log('W','CameraSvc','camera request ignored (state=ALREADY_USED)')}}
+   if(v!=='R'){S.cam=false}}
+ if(n==='fuel'){S.fuel=v;$('v-fuel').textContent=v;can('4B0','FuelLevel','['+hex(v,2)+']')}
+ if(n==='door'){S.door=v;can('350','DoorStatus','['+(v?'01':'00')+']');log('I','BodySvc','driverDoor='+(v?'OPEN':'CLOSED'))}
+ if(n==='belt'){S.belt=v;can('360','SeatbeltStatus','['+(v?'01':'00')+']');if(v&&bug()===false)S.beltLatch=false}
+ if(n==='turn'){S.turn=v;can('370','TurnLever','['+{off:'00',left:'01',right:'02'}[v]+']')}
+ if(n==='hour'){S.hour=v;$('v-hr').textContent=v}
+ if(n==='btlost'){S.bt=false;log('W','BluetoothAdapter','link lost');if(!bug()){}}
+ cluster();overlay();if(S.app==='nav'||S.app==='home')statusbar();
+}
+function setIgn(){S.ign=!S.ign;if(S.ign)S.everOn=true;$('ignb').textContent=S.ign?'Turn OFF':'Turn ON';can('100','Ignition','['+(S.ign?'01':'00')+']');log('I','PowerMgr','ignition '+(S.ign?'ON':'OFF'));
+ if(S.ign){S.bulb=true;setTimeout(function(){S.bulb=false;cluster()},1500);S.beltLatch=false;S.camN=0;if(S.gear==='R'){S.cam=true;S.camN=1}}else{S.play=false;S.cam=false;S.call=false}
+ cluster();render()}
+function cluster(){var c=$('cluster');c.classList.toggle('off',!S.ign);
+ var shown=S.speed;if(bug()&&S.speed>120)shown=S.speed+8;
+ $('spdn').textContent=S.ign?shown:'';
+ var gs='P R N D'.split(' '),g=S.gear;if(bug()&&g==='N')g='D';
+ $('gear').innerHTML=gs.map(function(x){return '<b class="'+(x===g?'on':'')+'">'+x+'</b>'}).join('');
+ var chips='',bulb=S.bulb;
+ var beltWarn=!S.belt&&S.speed>10;if(beltWarn)S.beltLatch=true;
+ var bw=bug()?(S.beltLatch):beltWarn;
+ var lowFuel=bug()?S.fuel<5:S.fuel<15;
+ var doorW=S.door&&(bug()?S.speed<=5:true);
+ chips+='<span class="chip '+((bw||bulb)?'red':'')+'">SEATBELT</span>';
+ chips+='<span class="chip '+((doorW||bulb)?'red':'')+'">DOOR</span>';
+ chips+='<span class="chip '+((lowFuel||bulb)?'amb':'')+'">LOW FUEL</span>';
+ chips+='<span class="chip '+(bulb?'amb':'')+'">ENGINE</span>';
+ $('chips').innerHTML=chips;
+ var L=S.turn==='left',R=S.turn==='right';if(bug()){var t=L;L=R;R=t}
+ $('tl').className=S.ign&&L?'on':'';$('tr').className=S.ign&&R?'on':'';
+ $('fuelp').textContent=S.fuel+'%';$('fuelb').style.width=S.fuel+'%';$('fuelb').style.background=S.fuel<15?'#f59e0b':'#22c55e';
+ $('odo').textContent=S.ign?'Odo 12,408 km':'Ignition OFF';
+ $('clk').textContent=S.ign?clock():'';
+ statusbar();
+}
+function clock(){var h=S.hour,m='30';if(bug())return h+':'+m+(h>=12?' PM':' AM');var hh=h%12||12;return hh+':'+m+(h>=12?' PM':' AM')}
+function statusbar(){$('stl').textContent=(S.bt?'ᛒ ':'')+(S.bt?'Rahul\'s Phone':'');$('stc').textContent=clock();$('str').textContent=(S.muted?'🔇 ':'🔊 ')+volText()+(S.call?' · 📞':'')}
+function volText(){return (bug()&&S.vol===30)?31:S.vol}
+
+/* ---------- IVI ---------- */
+function dockHtml(){var a=['home','media','phone','nav','climate','set'];$('dock').innerHTML=a.map(function(k){return '<button class="'+(S.app===k?'on':'')+'" onclick="open_(\''+k+'\')">'+(k==='home'?'🏠':'')+' '+tr(k).slice(0,9)+'</button>'}).join('')}
+function open_(k){
+ if(!S.ign)return;
+ log('I','ActivityTaskManager','start '+k);
+ if(k==='nav'&&bug()){S.app='nav';dockHtml();$('scr').innerHTML='';var my=k;setTimeout(function(){if(S.app===my)render()},3000);return}
+ S.app=k;render()}
+function themeClass(){return S.night?'night':'day'}
+function render(){
+ var ivi=$('ivi'),scr=$('scr');
+ var off=!S.ign&&!(bug()&&false);
+ if(!S.ign&&bug()&&S.everOn){ivi.classList.remove('off');}else ivi.classList.toggle('off',!S.ign);
+ if(!S.ign&&bug()&&S.everOn){statusbar();dockHtml();overlay();return}
+ scr.className='scr '+themeClass();dockHtml();statusbar();overlay();
+ var h='',k=S.app;
+ if(k==='home'){h='<h3>'+tr('home')+'</h3><div class="tiles">'+['media','phone','nav','climate','set'].map(function(x){return '<button class="tile" onclick="open_(\''+x+'\')">'+tr(x)+'</button>'}).join('')+'</div><p style="margin-top:14px;font-size:13px">Tip: use the Signal Simulator on the right.</p>'}
+ if(k==='media'){h='<h3>🎵 '+tr('media')+'</h3><div id="trk" style="font-size:20px"></div><div id="tm" style="margin:8px 0;font-family:Consolas"></div><div class="row"><button class="k" onclick="prev()">⏮</button><button class="k" id="pp" onclick="pp()"></button><button class="k" onclick="next()">⏭</button></div><div class="row">Volume: <span id="vv"></span></div>';}
+ if(k==='phone'){h='<h3>📞 '+tr('phone')+'</h3><div class="row"><label><input type="checkbox" '+(S.bt?'checked':'')+' onchange="btTog(this.checked)"> Bluetooth</label><span id="bts"></span></div><input type="text" id="dg" readonly value="'+S.digits+'" placeholder="Number"><div>'+'1234567890'.split('').map(function(d){return '<button class="k" onclick="dig(\''+d+'\')">'+d+'</button>'}).join('')+'<button class="k" onclick="dig(\'⌫\')">⌫</button></div><button class="k go" id="callb" onclick="doCall()">Call</button> <span id="cs"></span>'}
+ if(k==='nav'){var lock=S.speed>5&&!bug();h='<h3>🧭 '+tr('nav')+'</h3>'+(lock?'<div style="color:#f59e0b">Not available while driving</div>':'')+'<input type="text" id="dst" placeholder="Destination" '+(lock?'disabled':'')+' value="'+S.dest+'" oninput="S.dest=this.value"><div class="row"><button class="k go" onclick="navGo()" '+(lock?'disabled':'')+'>Start</button></div><div id="nres">'+(S.navMsg||'')+'</div>'}
+ if(k==='climate'){h='<h3>❄ '+tr('climate')+'</h3><div class="row"><button class="k" onclick="tmp(-1)">➖</button><span style="font-size:32px" id="tp"></span><button class="k" onclick="tmp(1)">➕</button></div><div class="row"><button class="k" onclick="unit()">Switch °C / °F</button><button class="k" onclick="S.ac=!S.ac;render()">AC: '+(S.ac?'ON':'OFF')+'</button></div><div class="row">Fan: <button class="k" onclick="S.fan=Math.max(0,S.fan-1);render()">−</button> '+S.fan+' <button class="k" onclick="S.fan=Math.min(5,S.fan+1);render()">+</button></div>'}
+ if(k==='set'){var lbl=(S.bad&&S.night)?'style="color:#222"':'';h='<h3>⚙ '+tr('set')+'</h3><div class="row" '+lbl+'><label '+lbl+'><input type="checkbox" '+(S.night?'checked':'')+' onchange="S.night=this.checked;render()"> Night mode</label></div><div class="row" '+lbl+'>Language: <button class="k" onclick="S.lang=\'en\';render()">English</button><button class="k" onclick="S.lang=\'de\';render()">Deutsch</button></div><p '+lbl+'>Software version: '+(S.bad?'0.9':'1.0')+'</p>'}
+ scr.innerHTML=h;
+ if(k==='media')mediaUpd();if(k==='phone')phoneUpd();if(k==='climate')tpUpd();
+}
+function mediaUpd(){if(S.app!=='media')return;var n=TRACKS.length;var nm=TRACKS[S.track];if(S.track>=n||S.track<0)nm='Unknown Track — undefined';$('trk').textContent=(S.track+1)+'. '+nm;
+ var t=S.t,s,m;if(bug()){m=Math.floor(t/100);s=t%100}else{m=Math.floor(t/60);s=t%60}$('tm').textContent=m+':'+String(s).padStart(2,'0')+' / 3:20';
+ $('pp').textContent=S.play?'⏸':'▶';$('vv').textContent=(S.muted?'MUTED ':'')+volText()+' / 30'}
+setInterval(function(){if(S.play&&S.ign){S.t++;if(S.app==='media')mediaUpd()}},1000);
+function pp(){S.play=!S.play;log('I','MediaSession',S.play?'play':'pause');mediaUpd()}
+function next(){var n=TRACKS.length;S.track++;if(S.track>=n&&!bug())S.track=0;S.t=0;log('I','MediaSession','track='+S.track);mediaUpd()}
+function prev(){var n=TRACKS.length;S.track--;if(S.track<0)S.track=n-1;S.t=0;mediaUpd()}
+function vol(d){if(!S.ign)return;S.vol=Math.max(0,Math.min(30,S.vol+d));S.muted=false;statusbar();if(S.app==='media')mediaUpd()}
+function toggleMute(){if(!S.ign)return;if(!S.muted){S.preMute=S.vol;S.muted=true}else{S.muted=false;if(bug())S.vol=0;else S.vol=S.preMute}statusbar();if(S.app==='media')mediaUpd()}
+function btTog(on){S.bt=on;if(on)log('I','BluetoothAdapter','connected');else log('I','BluetoothAdapter','disabled');phoneUpd();statusbar()}
+function phoneUpd(){if(S.app!=='phone')return;var shown=S.bt||(bug());$('bts').textContent=shown?'Connected to Rahul\'s Phone':'Not connected';
+ var cb=$('callb');cb.disabled=bug()?false:(!S.bt||S.digits==='');if(!bug()&&!S.bt)cb.disabled=true;if(bug()&&false)cb.disabled=false}
+function dig(d){if(d==='⌫')S.digits=S.digits.slice(0,-1);else if(S.digits.length<12)S.digits+=d;$('dg').value=S.digits;phoneUpd()}
+function doCall(){$('cs').textContent='Calling '+(S.digits||'…')+' …';log('I','Telecom','outgoing call '+(S.digits||'(empty)'))}
+function incoming(){if(!S.ign)return;S.call=true;log('I','Telecom','incoming call from Rahul');if(!bug()&&S.play){S.play=false;log('I','MediaSession','paused for call')}overlay();statusbar()}
+function endCall(){S.call=false;overlay();statusbar()}
+function navGo(){var d=(S.dest||'').trim();if(!d){S.navMsg=bug()?'Route: 0 km · ETA --':'<span style="color:#f87171">Please enter a destination</span>'}else{var mins=25;var tot=S.hour*60+30+(bug()?-mins:mins);tot=((tot%1440)+1440)%1440;var H=Math.floor(tot/60),M=tot%60;var hh=bug()?H:(H%12||12);S.navMsg='Route to '+d.replace(/[<>]/g,'')+': 12.4 km · 25 min · ETA '+hh+':'+String(M).padStart(2,'0')+(H>=12?' PM':' AM')}
+ render()}
+function tmp(d){var lo=bug()?14:16;if(S.unit==='F'&&!bug()){}var c=S.temp+d;if(c<lo||c>28)return;S.temp=c;tpUpd()}
+function tpUpd(){var el=$('tp');if(!el)return;if(S.unit==='C')el.textContent=S.temp+' °C';else el.textContent=(bug()?S.temp:Math.round(S.temp*9/5+32))+' °F'}
+function unit(){S.unit=S.unit==='C'?'F':'C';tpUpd()}
+function overlay(){var o=$('ovl'),h='';if(S.ign){if(S.call)h='<div class="overlay"><h2>📞 Incoming call</h2><p>Rahul</p><div><button class="k go" onclick="endCall()">Accept</button><button class="k no" onclick="endCall()">Reject</button></div></div>';else if(S.cam)h='<div class="overlay" style="padding:0"><div class="cam"><b>REAR CAMERA</b></div></div>'}
+ o.innerHTML=h}
+$('tabs').innerHTML=[['sig','Signal Simulator'],['req','Requirements'],['can','CAN trace'],['log','Logcat'],['bug','Bug Hunt']].map(function(x,i){return '<button class="'+(i?'':'on')+'" data-p="'+x[0]+'">'+x[1]+'</button>'}).join('');
+$('tabs').onclick=function(e){var p=e.target.dataset.p;if(!p)return;[].forEach.call(document.querySelectorAll('.tabs button'),function(b){b.classList.toggle('on',b===e.target)});[].forEach.call(document.querySelectorAll('.pane'),function(x){x.classList.toggle('on',x.id==='p-'+p)});if(p==='bug')bugHunt()};
+render();cluster();log('I','Boot','HMI mock started. Ignition is OFF.');
+</script></body></html>

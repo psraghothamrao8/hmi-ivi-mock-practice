@@ -1,0 +1,103 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Eye Test</title><link rel="stylesheet" href="style.css">
+<style>
+.scene{background:#0b0e14;border-radius:14px;padding:14px;margin:12px 0;color:#eaf0ff}
+.scr{background:#101827;border-radius:10px;padding:14px;min-height:240px;font-size:16px;position:relative}
+.scr *{cursor:crosshair}
+.hit{outline:3px solid #22c55e;outline-offset:2px;border-radius:4px}
+.miss{outline:3px dashed #ef4444;outline-offset:2px}
+.b{display:inline-block;background:#2a3858;color:#fff;padding:6px 12px;border-radius:8px;margin:3px}
+.g{background:#16a34a}.r{background:#dc2626}.dim{color:#7d8aa3}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #243049}
+.bar{height:10px;background:#243049;border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;background:#3b82f6}
+.big{font-size:44px;font-weight:700;font-family:Consolas,monospace}
+.pill{display:inline-block;padding:2px 8px;border-radius:99px;font-size:12px;font-weight:700}
+.status{position:sticky;top:50px;z-index:10;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 14px;display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+.sc{font-size:20px;font-weight:700}
+</style></head><body><main>
+<h1>3. The Eye Test</h1>
+<div class="tip"><b>Rules:</b> Each screen below has <b>hidden visual or logic mistakes</b>. <b>Click</b> on anything that looks wrong. Green = real defect, red dashed = nothing wrong there (a "false alarm" – testers should avoid these!). Think like this: <i>spelling? number? unit? icon? colour? alignment? does it make sense together?</i></div>
+<div class="status"><span>Found: <span class="sc" id="f">0</span> / <span id="tot">0</span></span><span>False alarms: <span class="sc" id="m">0</span></span><button class="btn alt" onclick="showAll()">Show all answers</button><button class="btn alt" onclick="location.reload()">Restart</button></div>
+
+<h2>Screen 1 – Media player</h2>
+<div class="scene"><div class="scr">
+ <div style="display:flex;gap:14px;align-items:center">
+  <div data-bug="Album art is missing and a broken-image icon is shown (missing resource)." style="width:90px;height:90px;border:2px dashed #ef4444;display:flex;align-items:center;justify-content:center;font-size:12px;text-align:center">🖼️ ✕<br>image not found</div>
+  <div><div data-bug="Typo: 'Now Playng' should be 'Now Playing'." class="dim">Now Playng</div><div style="font-size:22px">Road Trip Song</div><div class="dim">Artist: The Drivers</div></div></div>
+ <div style="margin:12px 0"><div class="bar"><i style="width:100%"></i></div>
+  <div style="display:flex;justify-content:space-between"><span data-bug="Elapsed time 0:75 is impossible – seconds must be 00 to 59.">0:75</span><span>3:20</span></div></div>
+ <div>🔊 Volume <span data-bug="Volume shows 31 / 30 – above the maximum (boundary defect).">31</span> / 30</div>
+ <div style="margin-top:10px"><span class="b">⏮</span><span class="b" data-bug="Play/Pause icon shows ⏸ while the header says 'Paused' – icon and state do not match.">⏸</span><span class="b">⏭</span> <span class="pill" style="background:#f59e0b;color:#000">Paused</span></div>
+ <div style="margin-top:10px" class="dim">Source: <span data-bug="Source says USB but the icon is Bluetooth (ᛒ) – inconsistent.">ᛒ USB</span> · Track 2 of 3</div>
+</div></div>
+
+<h2>Screen 2 – Climate</h2>
+<div class="scene"><div class="scr">
+ <div style="display:flex;justify-content:space-around;text-align:center"><div><div class="dim">Driver</div><div class="big">22°C</div></div><div><div class="dim">Passenger</div><div class="big" data-bug="Unit mismatch: passenger shows °F while driver shows °C (should be the same unit).">72°F</div></div></div>
+ <div class="row"><span>AC</span><span data-bug="AC switch looks OFF (grey) but the label says ON – state and icon mismatch." class="pill" style="background:#475569;color:#fff">ON</span></div>
+ <div class="row"><span>Fan speed</span><span><span data-bug="Fan level 6 / 5 – above the maximum." >6</span> / 5</span></div>
+ <div class="row"><span>Recirculation</span><span>Off</span></div>
+ <div class="row"><span style="margin-left:-4px;position:relative;left:18px;" data-bug="Layout: 'Defrost' label is misaligned / overlaps the value.">Defrost</span><span style="position:relative;right:30px">On</span></div>
+ <div class="row"><span>Air direction</span><span data-bug="Low contrast: grey text on a dark-grey background is almost invisible" style="color:#2c3a55">Face + Feet</span></div>
+</div></div>
+
+<h2>Screen 3 – Instrument cluster</h2>
+<div class="scene"><div class="scr" style="text-align:center">
+ <div><span class="big">60</span> <span data-bug="Unit says mph, but the rest of the system and the speed limit sign use km/h – unit inconsistency." class="dim">mph</span></div>
+ <div style="margin:10px 0"><span data-bug="Gear P and D are both highlighted – only one gear can be active." class="b g">P</span><span class="b">R</span><span class="b">N</span><span class="b g">D</span></div>
+ <div style="font-size:34px"><span data-bug="Both turn arrows are ON at the same time without the hazard button being pressed." style="color:#22c55e">◀ ▶</span></div>
+ <div style="margin:8px 0"><span class="pill r">SEATBELT</span> <span class="dim">(driver belt: fastened ✔)</span></div>
+ <div style="display:flex;gap:10px;justify-content:center;align-items:center">Fuel <div class="bar" style="width:140px"><i style="width:3%;background:#ef4444"></i></div><span data-bug="Fuel gauge shows almost empty but 'Range 540 km' – inconsistent, and the LOW FUEL lamp is missing.">Range 540 km</span></div>
+ <div style="margin-top:8px"><span class="pill" style="background:#f59e0b;color:#000">CHECK ENGINE</span> <span class="dim">ODO <span data-bug="Trip distance (999,999 km) is larger than the odometer (12,400 km) – impossible.">Trip 999,999 km</span> · 12,400 km</span></div>
+</div></div>
+
+<h2>Screen 4 – Phone / Bluetooth</h2>
+<div class="scene"><div class="scr">
+ <div class="row"><b>Contacts</b><span data-bug="Bluetooth icon is grey (disconnected) but text says 'Connected' – mismatch." class="dim">ᛒ(grey) Connected</span></div>
+ <div class="row"><span>Amit Kumar</span><span class="dim">📞</span></div>
+ <div class="row"><span data-bug="Sorting: 'Zara' appears before 'Bhavya' – the list should be alphabetical.">Zara Ali</span><span class="dim">📞</span></div>
+ <div class="row"><span>Bhavya Rao</span><span class="dim">📞</span></div>
+ <div class="row"><span data-bug="Duplicate contact: 'Bhavya Rao' is listed twice.">Bhavya Rao</span><span class="dim">📞</span></div>
+ <div class="row"><span>Network: ▂▄▆█ (full)</span><span data-bug="Signal bars are full but text says 'No network' – contradiction.">No network</span></div>
+ <div style="margin-top:10px">Call time <span data-bug="Call duration 00:61 – seconds cannot be 61.">00:61</span> <span class="b g" data-bug="'End call' button is green; end/hang-up should be red (standard colour convention, and risk of confusion with Answer).">End call</span></div>
+</div></div>
+
+<h2>Screen 5 – Navigation</h2>
+<div class="scene"><div class="scr">
+ <div style="display:flex;justify-content:space-between"><span>Time <b>10:30 AM</b></span><span>ETA <b data-bug="ETA 10:05 AM is earlier than the current time 10:30 AM.">10:05 AM</b></span></div>
+ <div style="margin:14px 0;font-size:34px"><span data-bug="Instruction says 'Turn right' but the arrow icon points left.">⬅️</span> <span style="font-size:20px">Turn right in 300 m</span></div>
+ <div style="width:200px;overflow:visible;white-space:nowrap"><span data-bug="Street name runs outside its box (text overflow / not truncated)." style="display:inline-block;background:#1f2a44;padding:4px 8px">on Mahatma Gandhi Road Extension Service Lane</span></div>
+ <div class="row" style="margin-top:30px"><span>Remaining</span><span data-bug="Mixed units: kilometres and miles shown together."> 12.4 km / 7.7 mi</span></div>
+ <div class="row"><span>Speed limit</span><span style="border:3px solid #ef4444;border-radius:50%;padding:4px 9px;background:#fff;color:#000;font-weight:700">50</span></div>
+</div></div>
+
+<h2>Screen 6 – Settings</h2>
+<div class="scene"><div class="scr">
+ <div class="row"><b>Einstellungen</b><span>Sprache: Deutsch</span></div>
+ <div class="row"><span data-bug="Language is German but this label is still English ('Brightness' not translated).">Brightness</span><span>Helligkeit</span></div>
+ <div class="row"><span>Nachtmodus</span><span data-bug="Toggle is drawn ON (blue) but the text says 'Aus' (Off) – mismatch." class="pill" style="background:#3b82f6">Aus</span></div>
+ <div class="row"><span>Helligkeit</span><span data-bug="Slider is at 0 but the label says 100 % – slider and value do not match."><span class="bar" style="width:100px;display:inline-block"><i style="width:0%"></i></span> 100 %</span></div>
+ <div class="row"><span>Datum</span><span data-bug="Invalid date: 31/02/2026 does not exist.">31/02/2026</span></div>
+ <div class="row"><span>Einheiten</span><span>km, °C, <span data-bug="Selected units show 'Liter/100km' and 'mpg' both – only one fuel unit should be selected." >L/100km + mpg</span></span></div>
+ <div class="row"><span>Softwareversion</span><span>1.0.4</span></div>
+</div></div>
+
+<h2>What to learn from the eye test</h2>
+<div class="card"><ul>
+<li><b>Check things together</b>, not alone (gauge + number, icon + text, toggle + label).</li>
+<li><b>Numbers have limits</b>: seconds ≤ 59, volume ≤ max, dates must exist.</li>
+<li><b>Units must be consistent</b> (km/h with km, °C with °C).</li>
+<li><b>Language</b>: everything translated, nothing cut off.</li>
+<li><b>Time logic</b>: ETA after now, trip ≤ odometer.</li>
+<li><b>Colour rules</b>: red = stop/danger, green = go/OK.</li>
+<li>Always ask: <i>"Does this make sense for a real driver?"</i></li></ul></div>
+</main><script src="nav.js"></script>
+<script>
+var els=document.querySelectorAll('[data-bug]');document.getElementById('tot').textContent=els.length;
+var f=0,m=0;
+document.querySelectorAll('.scr').forEach(function(s){s.addEventListener('click',function(e){
+ var t=e.target.closest('[data-bug]');
+ if(t){if(!t.classList.contains('hit')){t.classList.add('hit');f++;document.getElementById('f').textContent=f;t.title=t.dataset.bug;var n=document.createElement('div');n.style.cssText='font-size:13px;color:#86efac;margin-top:4px';n.textContent='✔ '+t.dataset.bug;s.appendChild(n)}}
+ else{e.target.classList.add('miss');m++;document.getElementById('m').textContent=m;setTimeout(function(){e.target.classList.remove('miss')},800)}
+})});
+function showAll(){els.forEach(function(t){if(!t.classList.contains('hit')){t.classList.add('hit');var s=t.closest('.scr'),n=document.createElement('div');n.style.cssText='font-size:13px;color:#fca5a5;margin-top:4px';n.textContent='✖ missed: '+t.dataset.bug;s.appendChild(n)}})}
+</script></body></html>

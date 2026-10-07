@@ -1,0 +1,96 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Learn Basics</title><link rel="stylesheet" href="style.css">
+<style>.flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:12px 0}.flow span{background:var(--brand);color:#fff;padding:8px 12px;border-radius:8px;font-weight:600}.flow i{font-style:normal;color:var(--muted)}</style></head><body><main>
+<h1>1. Learn the Basics</h1>
+
+<h2>Simple word list (jargon explained)</h2>
+<table>
+<tr><th>Word</th><th>Simple meaning</th></tr>
+<tr><td><b>HMI</b></td><td>Human Machine Interface – everything the driver sees or touches: screens, buttons, warning lights, voice.</td></tr>
+<tr><td><b>IVI</b></td><td>In-Vehicle Infotainment – the middle touch screen: music, phone, maps, AC, settings.</td></tr>
+<tr><td><b>Instrument Cluster</b></td><td>The screen/dials behind the steering wheel: speed, fuel, gear, warning lights.</td></tr>
+<tr><td><b>ECU</b></td><td>Electronic Control Unit – a small computer in the car. A car has many (engine ECU, door ECU, AC ECU…).</td></tr>
+<tr><td><b>Signal</b></td><td>One small piece of data, e.g. "speed = 60", "door = open", "gear = R".</td></tr>
+<tr><td><b>CAN bus</b></td><td>The "wire road" ECUs use to send messages to each other. Think of it as a WhatsApp group for car computers.</td></tr>
+<tr><td><b>CAN ID</b></td><td>The "name tag" of a message, like <code>0x3F0</code>. It tells everyone what the message is about (e.g. speed).</td></tr>
+<tr><td><b>DBC file</b></td><td>A "dictionary" file. It says: CAN ID 0x3F0, bytes 0–1 = speed, multiply by 0.01 = km/h. Without it, the data looks like random numbers.</td></tr>
+<tr><td><b>Gateway</b></td><td>A "post office" ECU that passes messages between different networks in the car (and to the IVI).</td></tr>
+<tr><td><b>Android Automotive / Android</b></td><td>The operating system running many IVIs (like Android on a phone).</td></tr>
+<tr><td><b>Signal simulation</b></td><td>We can't always sit in a real car. A tool <b>pretends</b> to be the car and sends fake signals ("speed = 120") so we can see what the screen does. Real tools: Vector CANoe, CANalyzer, PCAN, or the customer's own tool. (Page 2 has a mock one.)</td></tr>
+<tr><td><b>Requirement / Spec</b></td><td>A written rule: "When the door is open the door icon must show." We test against this.</td></tr>
+<tr><td><b>Test case</b></td><td>A written recipe: steps + expected result.</td></tr>
+<tr><td><b>Defect / Bug</b></td><td>Actual result is different from expected result.</td></tr>
+<tr><td><b>Regression testing</b></td><td>After a fix, re-check old things to be sure nothing else broke.</td></tr>
+<tr><td><b>Smoke testing</b></td><td>Quick check on a new build: "does it start and do the main things work?" If not, stop testing.</td></tr>
+<tr><td><b>Test automation</b></td><td>A script does the test steps instead of a human. You <b>run</b> it and read the result.</td></tr>
+<tr><td><b>Log / Trace</b></td><td>A diary the software writes while running. When something fails, logs tell why. Evidence for the developer.</td></tr>
+<tr><td><b>Build / Software version</b></td><td>A numbered copy of the software. Always write the build number in a defect.</td></tr>
+<tr><td><b>Customer proxy team</b></td><td>People who represent the customer (the car company) and talk to you about test runs and issues.</td></tr>
+<tr><td><b>Driver distraction</b></td><td>Safety rule: while the car is moving, some things (typing on screen, videos) must be blocked.</td></tr>
+</table>
+
+<h2>How data travels (you wrote this in your resume – know it!)</h2>
+<div class="flow"><span>ECU</span><i>→</i><span>CAN bus</span><i>→</i><span>Gateway</span><i>→</i><span>IVI</span><i>→</i><span>Android</span><i>→</i><span>HMI screen</span></div>
+<div class="card"><p><b>Example, in plain words:</b> The car is moving → the engine ECU measures speed = 60 km/h → puts it in a CAN message with ID <code>0x3F0</code> → the gateway forwards it → the IVI/cluster software reads it → an Android app draws "60" on the screen.</p>
+<p><b>Why testers care:</b> If the screen shows a wrong number, the problem can be in any step. You help find <i>where</i> by checking logs: Was the message sent? Was it received? Was it shown?</p></div>
+
+<h2>Two screens you will test</h2>
+<div class="grid">
+<div class="card"><h3>Instrument cluster (behind steering wheel)</h3><ul><li>Speed, RPM, fuel, temperature</li><li>Gear: P R N D</li><li>Warning lights: seatbelt, door, engine, low fuel, tyre pressure</li><li>Turn signals (indicators), high beam</li><li><b>Safety critical</b> → wrong info here is usually <b>high severity</b></li></ul></div>
+<div class="card"><h3>IVI (centre screen)</h3><ul><li>Media: radio, USB, Bluetooth music</li><li>Phone: calls, contacts, Bluetooth pairing</li><li>Navigation (maps)</li><li>Climate (AC), Settings, language, themes</li><li>Rear camera when in reverse gear</li></ul></div>
+</div>
+
+<h2>What you actually check (HMI test checklist)</h2>
+<div class="card"><ol>
+<li><b>Function</b> – does the button do what it should?</li>
+<li><b>Display</b> – correct text, spelling, icon, colour, unit (km/h vs mph, °C vs °F), alignment; nothing cut off or overlapping.</li>
+<li><b>Signal reaction</b> – change a signal → does the screen react correctly and quickly?</li>
+<li><b>State</b> – what happens with Ignition ON/OFF, gear changes, phone connected/disconnected?</li>
+<li><b>Timing</b> – delays, freezes, slow loading. (Rule of thumb: a tap should react in about 1 second.)</li>
+<li><b>Languages and themes</b> – day/night mode, translations, long German words.</li>
+<li><b>Negative tests</b> – wrong or empty input, pressing buttons very fast, unplugging while playing.</li>
+<li><b>Boundaries (edge)</b> – minimum/maximum values: volume 0 and 30, temperature 16 and 28.</li>
+<li><b>Interruptions</b> – a call comes while music is playing; reverse gear while navigating.</li>
+<li><b>Safety</b> – locks while driving.</li>
+</ol>
+<div class="tip">Words from your resume: <b>positive</b> = correct input works; <b>negative</b> = wrong input is handled safely; <b>edge</b> = limits; <b>explicit</b> = written in the requirement; <b>implicit</b> = not written, but any user expects it (e.g. the app should not crash).</div></div>
+
+<h2>ADB and Logcat (you listed these – be ready)</h2>
+<p><b>ADB</b> (Android Debug Bridge) = a command-line tool on your laptop that talks to an Android device (the IVI) over USB or network. <b>Logcat</b> = shows the Android log diary live.</p>
+<pre>adb devices                      # is the IVI connected? lists devices
+adb shell                        # open a command window inside the IVI
+adb logcat                       # live logs (very long!)
+adb logcat -c                    # clear old logs BEFORE reproducing the bug
+adb logcat -v time > bug.txt     # save logs with time into a file (attach to defect)
+adb logcat *:E                   # only Errors
+adb logcat | findstr Bluetooth   # filter lines (Windows). On Linux/Mac use grep
+adb logcat -b crash              # crash buffer
+adb bugreport                    # big zip with everything, for developers
+adb shell screencap -p /sdcard/s.png ; adb pull /sdcard/s.png   # screenshot
+adb shell screenrecord /sdcard/v.mp4                            # screen video
+adb shell getprop ro.build.version.release   # Android version</pre>
+<p><b>Log levels</b> (low → high): <code>V</code> verbose, <code>D</code> debug, <code>I</code> info, <code>W</code> warning, <code>E</code> error, <code>F</code> fatal. Look first for <code>E</code>, <code>FATAL EXCEPTION</code>, and <code>ANR</code> (App Not Responding = the app froze).</p>
+<div class="card"><b>Good bug-evidence routine:</b> 1) clear logcat 2) start screen recording 3) do the steps 4) when the bug appears, note the <b>exact time</b> 5) save logcat 6) attach video + log + screenshot to the ticket.</div>
+
+<h2>Severity vs Priority (interviewers love this)</h2>
+<table><tr><th></th><th>Severity</th><th>Priority</th></tr>
+<tr><td>Meaning</td><td>How <b>bad</b> is the problem for the product/user? (Tester decides)</td><td>How <b>soon</b> should it be fixed? (Manager/product owner decides, tester suggests)</td></tr>
+<tr><td>Levels</td><td>Critical / Major / Minor / Trivial</td><td>High / Medium / Low</td></tr></table>
+<table><tr><th>Example</th><th>Severity</th><th>Priority</th></tr>
+<tr><td>Cluster shows 60 km/h when real speed is 80</td><td>Critical (safety)</td><td>High</td></tr>
+<tr><td>Typo on the "About" page</td><td>Minor</td><td>Low</td></tr>
+<tr><td>Company name spelled wrong on the start screen</td><td>Minor</td><td><b>High</b> (brand embarrassment) – low severity but high priority</td></tr>
+<tr><td>Crash in a rarely used feature that is not released yet</td><td>Major</td><td>Low</td></tr></table>
+
+<h2>Defect life cycle</h2>
+<div class="flow"><span>New</span><i>→</i><span>Assigned</span><i>→</i><span>In Progress</span><i>→</i><span>Fixed</span><i>→</i><span>Retest</span><i>→</i><span>Closed</span></div>
+<p>Other states: <b>Reopened</b> (still broken), <b>Rejected / Not a bug</b>, <b>Duplicate</b>, <b>Cannot reproduce</b>, <b>Deferred</b> (fix later). "Cannot reproduce" is the reason <b>good steps + logs</b> matter.</p>
+
+<h2>Test execution lifecycle (the JD mentions it)</h2>
+<ol><li>Get the build + requirements</li><li>Smoke test the build</li><li>Run planned test cases (manual + automated)</li><li>Mark each: Pass / Fail / Blocked / Not Run</li><li>Log defects for fails</li><li>Retest fixes + regression</li><li>Daily/final test report: total, passed, failed, blocked, open defects, risks</li></ol>
+<p><b>Blocked</b> = cannot run because something else is broken (e.g. Bluetooth won't pair, so call tests are blocked).</p>
+
+<h2>Reading an automation failure (key point in the JD)</h2>
+<p>When an automated test fails, ask in this order:</p>
+<ol><li><b>Environment problem?</b> Device not connected, wrong build, tool crash, network. → Re-run once.</li><li><b>Test script problem?</b> Script clicks an old button name, or waits too short. → Tell the automation owner / customer proxy.</li><li><b>Real product bug?</b> Same failure again; logs show an app error or wrong value. → Raise a defect with logs.</li><li><b>Flaky?</b> Passes sometimes, fails sometimes. → Run 3–5 times, report the pass rate.</li></ol>
+<div class="tip">Say this in the interview: "I never just write 'test failed'. I write what failed, expected vs actual, the log lines, how many times it repeated, and the impact."</div>
+</main><script src="nav.js"></script></body></html>

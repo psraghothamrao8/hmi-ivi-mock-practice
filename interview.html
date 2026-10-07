@@ -1,0 +1,131 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Interview Q and A</title><link rel="stylesheet" href="style.css"></head><body><main>
+<h1>5. Interview Questions &amp; Sample Answers</h1>
+<div class="tip warn"><b>Important:</b> The answers below are <b>models</b>. Where you see <b>[your example]</b>, put something that <b>really happened</b> in your internship. Interviewers can tell when an answer is memorised or made up. Use short sentences. Speak slowly. It is fine to say "let me think for a moment".</div>
+<div class="tip"><b>Answer shape that always works (STAR):</b> <b>S</b>ituation (where) → <b>T</b>ask (what was needed) → <b>A</b>ction (what <i>you</i> did) → <b>R</b>esult (what happened).</div>
+<input type="search" id="q" placeholder="Search questions… (e.g. CAN, logcat, severity, automation)">
+<div id="out"></div>
+
+<h2>Questions YOU should ask them (shows ownership)</h2>
+<div class="card"><ol>
+<li>What does the HMI test setup look like – real car, test bench, or simulation?</li>
+<li>Which tools are used for signal simulation and test management?</li>
+<li>Which automation framework do you use, and what part would I run vs. maintain?</li>
+<li>How is the work split with the customer proxy team? How often do we talk?</li>
+<li>What would a successful first 3 months look like?</li>
+<li>How are defects reviewed – daily triage?</li>
+<li>Is there training for the tools I haven't used yet?</li>
+</ol></div>
+
+<h2>Last-night checklist</h2>
+<div class="card"><ul>
+<li>☐ Play the Mock Car for 30 min; find all 22 defects</li>
+<li>☐ Finish the Eye Test</li>
+<li>☐ Write one defect report out loud from memory</li>
+<li>☐ Prepare a 60-second "Tell me about yourself"</li>
+<li>☐ Prepare two real stories from your internship (a bug you found; a time you learned something fast)</li>
+<li>☐ Test your internet/camera/mic; keep resume + JD open; keep water nearby</li>
+<li>☐ Sleep well – calm brain beats extra cramming</li>
+<li>☐ Delete the GitHub token you shared earlier</li></ul></div>
+</main><script src="nav.js"></script>
+<script>
+var Q=[
+["Introduction",[
+["Tell me about yourself.","I am a QA engineer with 6 months of hands-on experience in automotive HMI and IVI testing. At Idea Souk I wrote and ran test cases for features like Bluetooth and Navigation, used basic signal simulation to trigger HMI behaviour, and reported defects with steps, logs and evidence using Jira, ADB and Logcat. Before that I did manual and data-validation testing, with SQL, at SYSTECH. I also built basic Selenium-Python scripts. I like careful, detailed work, and I'm looking to grow in automotive testing."],
+["Why automotive testing?","Because a mistake on a car screen can be a safety problem, not just an annoyance. That makes testing meaningful. I also like that it mixes software with real vehicle behaviour: signals, ECUs and screens working together."],
+["Why should we hire you for a 'Senior' role when you are a fresher?","I will be honest: I'm early in my career, but my experience is directly in this area – HMI/IVI manual testing, defect reporting with logs, and signal simulation basics. I learn fast, I work independently, and I take ownership of my work. I'd like to understand which senior responsibilities matter most in the first months so I can focus on them."],
+["What are your strengths?","Attention to detail (I notice small things like units, alignment, wrong states), clear defect writing, and curiosity – I like to check logs to see why something failed. [your example]"],
+["What is your weakness?","I'm still building experience with some professional tools such as full CANoe-level simulation. I handle it by practising on my own and asking good questions early. [mention something you did to improve]"],
+["Where do you see yourself in 3 years?","Strong in automotive testing, comfortable with test automation and signal tools, and trusted to own a feature area."]
+]],
+["HMI and IVI basics",[
+["What is HMI?","Human Machine Interface – everything the driver sees or touches to interact with the car: the instrument cluster, the centre screen, buttons, warning lights and voice. HMI testing checks they show the right thing and react correctly."],
+["What is IVI? How is it different from HMI?","IVI is In-Vehicle Infotainment – the centre screen with music, phone, navigation, climate and settings. IVI is one part of the wider HMI. The cluster (speed, fuel, warnings) is HMI too, but not IVI."],
+["What is an instrument cluster?","The display behind the steering wheel showing speed, gear, fuel, and warning lights. It is safety critical, so defects there usually have high severity."],
+["Explain the data flow ECU → CAN → Gateway → IVI → Android → HMI.","An ECU measures or decides something, like speed. It sends it as a CAN message with an ID. The gateway passes it between networks. The IVI software receives it, Android apps use it, and the HMI shows it on screen. When something looks wrong, I check each step: was the signal sent, received, and displayed?"],
+["What is a signal?","A single piece of vehicle data such as speed, gear, door status or fuel level, carried inside CAN messages."],
+["What is CAN and a CAN ID?","CAN (Controller Area Network) is the communication network that lets ECUs talk to each other. Every message has a CAN ID, like a label that says what the message is about."],
+["What is a DBC file?","A dictionary for CAN. It tells which bytes in which message are which signal, plus scaling and units. With it, a tool can show 'Speed = 60 km/h' instead of raw hex bytes."],
+["What is signal simulation and why do we use it?","We use a tool to send fake vehicle signals so we can test the HMI without driving a real car: set speed to 120, open a door, change gear, and check the screen. It is faster, safer and repeatable, and lets us test cases that are hard in real life (for example low fuel)."],
+["Which simulation tools do you know?","I have used basic signal simulation to trigger and verify HMI behaviour. I know that tools like Vector CANoe/CANalyzer are commonly used for this. I understand the concept – sending signals by ID, using a DBC – and I'm ready to learn the project's specific tool. [be honest about exactly what you used]"],
+["What is Android Automotive / how does the IVI run apps?","Many IVIs run Android. Apps like Media, Phone and Maps run on top of it, and a vehicle layer feeds in vehicle data. That's why ADB and logcat work for IVI debugging."],
+["What would you test on a rear camera feature?","Camera starts when gear = R (every time, within the time limit); closes when leaving R; guide lines show; works after ignition cycle; works while navigation or media is running; what happens during an incoming call; does it still work when the speed is not zero; and failure behaviour if the camera signal is missing."],
+["What is driver distraction and which tests relate?","Rules that stop features that take the driver's eyes off the road while moving, e.g. typing, video, long lists. Test: set speed above the limit and check that the keyboard is locked and a message appears."]
+]],
+["Manual testing",[
+["Types of testing you did?","Functional, regression, smoke, positive, negative, edge, data validation; also explicit and implicit scenarios."],
+["Explain positive, negative and edge testing with an HMI example.","Positive: volume + works up to 30. Negative: press Call with no number – it should be blocked. Edge: volume at 0 and 30, and trying 31."],
+["Explicit vs implicit scenarios?","Explicit are written in the requirement (e.g. 'warning appears below 15% fuel'). Implicit are not written but expected: the screen should not freeze, text should be readable, a crash should never happen."],
+["How do you write a good test case?","Clear ID and title, pre-conditions, numbered steps, expected result, and a link to the requirement. One purpose per test, so the result is easy to understand."],
+["What is smoke vs regression vs retesting?","Smoke: quick check that a new build is stable enough to test. Regression: re-check existing features after a change. Retesting: check that a specific fixed defect is really fixed."],
+["How do you test without a requirement?","Ask first. If I can't, I use experience and comparison: similar features, previous builds, standards, and common sense – and I document my assumptions and confirm them later."],
+["What do you do if you cannot reproduce a bug?","Repeat with the exact same steps and state, check build version, ignition/ phone state, timing; look at logs from the first time; try a few times and write the rate (e.g. 2 of 10). I still report it with the evidence and clearly say 'intermittent'."],
+["How do you decide Pass / Fail / Blocked?","Pass: actual = expected. Fail: not equal. Blocked: I can't run the test because of another problem (e.g. Bluetooth won't pair, so call tests are blocked)."],
+["How do you prioritise testing when time is short?","Risk first: safety-critical and often-used features, then new/changed features, then the rest. I tell the team clearly what was not covered."],
+["Give an example of boundary value analysis.","Temperature range 16–28 °C: test 15, 16, 17, 27, 28, 29."]
+]],
+["Defects",[
+["What does a good defect report contain?","Clear title, build/version, environment, steps to reproduce, expected vs actual, how often, severity/priority, impact, and evidence: screenshot/video/logs/trace."],
+["Severity vs priority?","Severity = how bad the effect is. Priority = how soon to fix. A wrong speed on the cluster is high severity. A small typo is low severity, but a wrong company name on the start screen can be high priority."],
+["Give a defect you found.","[your real example]. Shape: 'In the Bluetooth feature, when [steps], the screen showed [actual] but the requirement says [expected]. I attached logcat and a video, set severity Major, and the developer fixed it in the next build; I retested and closed it.' (If you don't have one, use something you really saw – don't invent it.)"],
+["Developer says 'not a bug'. What do you do?","Stay calm, show the requirement or expected behaviour and my evidence. If the requirement is unclear, ask the product owner / customer proxy. It's about the product, not winning."],
+["What is a duplicate defect? How do you avoid it?","Same issue reported twice. I search the tracker with keywords before logging."],
+["What is impact analysis?","Explaining what happens to the user or product if the defect is shipped: safety, legal, user frustration, how many users, and if a workaround exists."],
+["Defect life cycle?","New → Assigned → In progress → Fixed → Retest → Closed. Also Reopened, Rejected, Duplicate, Deferred, Cannot reproduce."],
+["Which tools have you used?","Jira for defects, Postman for APIs, Git/GitHub, ADB and Logcat for Android logs, SQL for data checks, Jenkins basics."],
+["How do you attach good evidence?","Clear logcat before reproducing, record the screen, note the exact time of failure, save logs to a file, add a screenshot and the CAN trace if available."],
+["Is there something you should never write in a defect?","Never 'It doesn't work' without detail, never several bugs in one ticket, never blaming people."]
+]],
+["Logs, ADB and Logcat",[
+["What is ADB?","Android Debug Bridge – a command-line tool that connects my laptop to an Android device like the IVI so I can read logs, take screenshots, and run commands."],
+["What is logcat and how do you use it?","Shows the device's live log messages. I clear it first (adb logcat -c), reproduce the issue, then save it (adb logcat -v time > file.txt) and search for errors, exceptions, crashes around the time of failure."],
+["Log levels?","V verbose, D debug, I info, W warning, E error, F fatal."],
+["What is an ANR?","'Application Not Responding' – the app froze for too long. High severity."],
+["How do you find the problem in a big log file?","Note the time of the failure, search around that time, filter by the app/feature (Bluetooth, Media), look first for E/F lines, exceptions and 'FATAL EXCEPTION'."],
+["How do you check which devices are connected?","adb devices."],
+["What is a trace?","A recording of messages over time, e.g. CAN trace shows which signal was sent when. It helps to prove whether the problem is in the signal or in the HMI."],
+["The speed on screen is wrong. How do you find where the problem is?","Check the simulator: was the right speed signal sent? Check the CAN trace: is the message correct? Check the app log: did it receive the value? If all are correct but the screen is wrong, the problem is in the HMI display logic. I report with this evidence."]
+]],
+["Automation execution (key part of the JD)",[
+["Have you executed automated test suites?","I built basic Selenium-Python scripts and organised them so they can run through Jenkins. For this role I understand running a customer-provided suite: start it, watch results, analyse failures and report."],
+["An automated test fails. What do you do?","First check if it's an environment problem (device, build, network). Re-run once. If it fails again, read the report and logs. Decide: product bug, script issue, or flaky. Then raise a defect (with logs) or inform the automation owner."],
+["What is a flaky test?","A test that sometimes passes and sometimes fails with no change. I run it several times, report the pass rate, and look for timing or environment causes."],
+["How do you report automation failures?","Test name, build, date/time, failure message, expected vs actual, logs and screenshots, how many times repeated, and impact."],
+["What do you put in a test report?","Total tests, passed, failed, blocked, not run; pass %, list of open defects with severity; risks and blockers; build tested; any environment issues."],
+["What is Jenkins?","A tool that runs jobs automatically, like starting test suites on a schedule or when a new build arrives, and keeps the results."],
+["Manual vs automation – when to use which?","Automation for repeated, stable checks (regression). Manual for new features, visual checks, usability, and one-off scenarios. HMI needs lots of manual visual checking."],
+["How will you work with the customer proxy team?","Clear, regular communication: share results daily, raise issues early with evidence, confirm expectations in writing, ask when something is unclear."]
+]],
+["Resume-based questions",[
+["Tell me about your Idea Souk internship.","I tested HMI/IVI features for six months: designed and ran test cases (positive, negative, edge, explicit and implicit), used basic vehicle signal simulation to trigger HMI behaviour, tested Bluetooth and Navigation, and reported defects with steps, severity, priority, logs and evidence. [add 1 real story]"],
+["What did you do with vehicle signals?","I used basic simulation to change signals, e.g. speed or door state, and checked whether the HMI reacted as expected. I also studied CAN IDs, signals and DBC files."],
+["What is the 'Numocity' project?","EV charging dashboard validation: I used SQL on PostgreSQL to compare dashboard values with the database, and checked ETL data movement for missing, duplicate or mismatched records. It taught me data accuracy testing."],
+["What is ETL testing?","ETL = Extract, Transform, Load: data moves from source to target. Testing checks nothing is missing, duplicated or changed wrongly."],
+["Tell me about your SYSTECH apprenticeship.","I did functional, regression and data validation tests on dashboards, wrote 100+ test cases, used SQL to verify numbers against source data, and tracked defects in Agile cycles."],
+["What is Agile?","A way of working in short cycles (sprints) with frequent releases, and continuous feedback; testers test along with development."],
+["What is STLC?","Software Testing Life Cycle: requirement analysis, test planning, test case design, environment setup, execution, defect reporting, and closure/report."],
+["Basic SQL question: how do you find duplicates?","SELECT name, COUNT(*) FROM table GROUP BY name HAVING COUNT(*) &gt; 1;"],
+["Your Selenium project – how does it run?","Python scripts open pages with WebDriver, perform steps, compare actual vs expected, and record pass/fail. Scripts are organised so Jenkins can run them."]
+]],
+["Scenarios (think aloud!)",[
+["Scenario: Music is playing and a call comes in. What do you test?","Music pauses (if specified); call screen appears; accept/reject works; call audio plays; after the call music resumes; volume is correct; works with navigation prompts; phone disconnects during call; two quick calls."],
+["Scenario: Door open warning on cluster. Test ideas?","Each door open/close; several doors; at speed 0 and speed > 5; ignition off/on; warning priority vs other warnings; correct text and icon; how fast it appears; clear after closing."],
+["Scenario: Screen is black after ignition ON. What do you do?","Check power/connection, then logs (boot messages), try again, note frequency, and check build. Collect logs and a video of start-up and report as high severity if it blocks use."],
+["Scenario: The same test passes on build A, fails on build B.","That is a regression. Compare steps, check that the environment is the same, collect logs from both builds, mention both build numbers in the defect."],
+["Scenario: You are blocked and your lead is not online.","I'd try documented solutions, check logs, ask a colleague, and if it's still blocked I'd write a clear message to the lead with what I tried and evidence, then continue other tests so time is not lost."],
+["Scenario: You find 20 defects on the last day.","Report them all with clear severity, highlight critical ones to the lead immediately, give an honest report of risks, and let the team decide about release."],
+["Scenario: Customer says a defect is not a defect.","Share the requirement and evidence, listen, check if the requirement is unclear, and aim for a clear written decision."]
+]],
+["Behavioural and soft skills",[
+["Tell me about a time you made a mistake.","[your example] Describe what happened, what you learned and how you changed (e.g. a checklist). Honesty plus learning is the point."],
+["How do you handle disagreement?","I focus on facts and evidence, listen to the other view, and take it to the lead if we can't agree."],
+["How do you work with international teams?","Write clear and polite messages, confirm understanding in writing, respect time zones, share updates regularly, and don't assume – ask."],
+["What does 'ownership' mean to you?","I treat my area as my responsibility: I follow work to the end, retest fixes, tell the team early about risks and don't wait to be asked."],
+["How do you manage pressure and deadlines?","Plan, prioritise by risk, communicate early if it's at risk, and focus on what matters most."],
+["Are you OK with working independently?","Yes. I check requirements, make a plan, and ask for help after trying myself, with a clear question."],
+["Are you willing to relocate / work in shifts / expected CTC / notice period?","Answer honestly and briefly. For salary, give a range that you researched. Say you are open to discuss based on the role and learning."]
+]]
+];
+var out=document.getElementById('out');
+function draw(f){var h='';Q.forEach(function(s){var items=s[1].filter(function(x){return !f||(x[0]+x[1]).toLowerCase().indexOf(f)>-1});if(!items.length)return;h+='<h2>'+s[0]+'</h2>'+items.map(function(x){return '<details><summary>'+x[0]+'</summary><p>'+x[1]+'</p></details>'}).join('')});out.innerHTML=h||'<p>No match.</p>'}
+document.getElementById('q').oninput=function(){draw(this.value.toLowerCase().trim())};draw('');
+</script></body></html>

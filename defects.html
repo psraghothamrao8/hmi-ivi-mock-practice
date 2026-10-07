@@ -1,0 +1,85 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Defects and Reports</title><link rel="stylesheet" href="style.css"></head><body><main>
+<h1>4. Defects, Reports &amp; Test Cases</h1>
+
+<h2>A. Common HMI / IVI defects (know at least 40 of these)</h2>
+<p>Use this as your <b>"eye test memory list"</b>. When you look at any screen, run through these groups.</p>
+
+<h3>Display / visual (UI)</h3>
+<ul><li>Spelling mistake or wrong grammar</li><li>Text cut off, overlapping, or running outside its box</li><li>Wrong font size / colour; low contrast (hard to read)</li><li>Misaligned items; uneven spacing</li><li>Missing, blurry, stretched or wrong icon</li><li>Broken image / missing album art</li><li>Icon and text disagree (toggle looks ON, text says OFF)</li><li>Screen flickers or tears while changing</li><li>Day/Night theme wrong: black text on dark background</li><li>Elements go off-screen in a different language</li></ul>
+
+<h3>Cluster / safety</h3>
+<ul><li>Wrong speed (value, or km/h vs mph)</li><li>Warning lamp not lit when it should be (door, seatbelt, low fuel, engine) – <b>very serious</b></li><li>Warning lamp stays lit after the cause is gone</li><li>Turn signal arrow wrong side / not blinking / wrong blink speed</li><li>Gear shown wrong</li><li>Two gears highlighted</li><li>Warnings not shown in the right order or hidden by another pop-up</li><li>Cluster slow to react to a speed change (lag)</li></ul>
+
+<h3>Function / logic</h3>
+<ul><li>Button does nothing, or does something else</li><li>Value goes beyond min or max (volume 31, temperature 14)</li><li>Previous/next track wrong; wrap-around missing</li><li>Time or date format wrong (0:75, 31/02, 13:00 PM)</li><li>State not remembered after restart (volume, last source, last language)</li><li>Settings do not apply</li><li>Switching units doesn't convert the number</li><li>Sort order wrong; duplicates in lists</li><li>Wrong ETA, distance, or route</li></ul>
+
+<h3>Connectivity (Bluetooth / phone)</h3>
+<ul><li>Pairing fails or takes too long</li><li>Shows "Connected" when it is not</li><li>Contacts do not sync or have garbled characters</li><li>Call audio on wrong speaker</li><li>Music does not pause for an incoming call, or does not resume after</li><li>Wrong caller name</li><li>Auto-reconnect fails after ignition cycle</li></ul>
+
+<h3>State, timing and stability</h3>
+<ul><li>App crash, freeze, "App not responding"</li><li>Slow start, long black screen after ignition ON</li><li>Screen stays on after ignition OFF</li><li>Rear camera late, missing, or only works once</li><li>Rapid taps cause crash (monkey/stress testing)</li><li>Memory/CPU high; system slows after hours (soak test)</li><li>Interrupt handling: call + navigation prompt + reverse at same time</li></ul>
+
+<h3>Safety rules (driver distraction)</h3>
+<ul><li>Typing/keyboard not locked while driving</li><li>Video playing in the front screen while driving</li><li>Too many pop-ups while driving</li></ul>
+
+<h3>Language / region</h3>
+<ul><li>Untranslated words</li><li>Wrong translation or wrong gender/word</li><li>German/Finnish long words get cut</li><li>Right-to-left languages (Arabic) layout not mirrored</li><li>Wrong units for region (miles in India)</li></ul>
+
+<h2>B. A good defect report (template)</h2>
+<div class="card"><pre>Title:        [Cluster] Door-open icon disappears when speed &gt; 5 km/h
+Build/SW:     Build 0.9, HMI v2.3.1, Vehicle: Test bench 2
+Environment:  Signal simulator + IVI on bench, Android 12
+Severity:     Critical   Priority: High (suggested)
+Reproducible: 5 out of 5 attempts
+
+Preconditions: Ignition ON, gear D.
+
+Steps to reproduce:
+1. Set driver door signal = OPEN.
+2. Observe door icon is shown on the cluster (OK).
+3. Increase speed signal from 0 to 10 km/h.
+
+Expected: Door-open icon stays ON while the door is open (Req R5).
+Actual:   Icon disappears when speed goes above 5 km/h.
+
+Impact:   Driver may not know the door is open while driving → safety risk.
+Evidence: video door_icon.mp4, screenshot, logcat_1032.txt (error at 10:32:14),
+          CAN trace: DoorStatus 0x350=01 still sent (so signal is OK;
+          problem is in HMI logic).
+Notes:    Works correctly in build 1.0 earlier. Regression?</pre></div>
+<div class="tip good"><b>Checklist:</b> One bug per ticket · Clear title (where + what) · Exact steps anyone can follow · Expected vs actual · Build number · How often · Logs/video/screenshots · Impact · Don't blame people.</div>
+<div class="tip warn"><b>Impact analysis</b> (JD word) = "if this goes to customers, what happens?" Think: safety? legal? user annoyed? brand? how many users? is there a workaround?</div>
+
+<h3>Title practice: weak vs strong</h3>
+<table><tr><th>Weak</th><th>Strong</th></tr>
+<tr><td>Bluetooth not working</td><td>[Phone] Bluetooth shows "Connected" after Bluetooth toggled OFF</td></tr>
+<tr><td>Wrong time</td><td>[Media] Elapsed time shows 0:75 after 75 seconds of playback</td></tr>
+<tr><td>Cluster issue</td><td>[Cluster] Left lever blinks right arrow</td></tr></table>
+
+<h2>C. Sample test cases (copy this style)</h2>
+<table>
+<tr><th>ID</th><th>Title</th><th>Pre-condition</th><th>Steps</th><th>Expected</th></tr>
+<tr><td>TC_CL_01</td><td>Speed display (positive)</td><td>Ignition ON</td><td>Send speed 0, 60, 120, 180 km/h</td><td>Cluster shows same values each time within 1 s</td></tr>
+<tr><td>TC_CL_02</td><td>Speed boundary (edge)</td><td>Ignition ON</td><td>Send speed 0 and max (e.g. 240)</td><td>Shows 0 and max, no overflow or "---"</td></tr>
+<tr><td>TC_CL_03</td><td>Seatbelt warning</td><td>Ignition ON, belt fastened</td><td>Speed 20; unfasten; fasten</td><td>Lamp ON on unfasten, OFF on fasten</td></tr>
+<tr><td>TC_CL_04</td><td>Low fuel</td><td>Ignition ON</td><td>Fuel 20, 15, 14, 5</td><td>Warning appears below 15 %</td></tr>
+<tr><td>TC_CL_05</td><td>Turn signal</td><td>Ignition ON</td><td>Lever left / right / off</td><td>Correct arrow blinks; stops at off</td></tr>
+<tr><td>TC_IV_01</td><td>Volume edge</td><td>Media playing</td><td>Press Vol+ 40 times; Vol− 40 times</td><td>Stops at 30 and 0; display matches</td></tr>
+<tr><td>TC_IV_02</td><td>Incoming call interrupt</td><td>Phone paired, music playing</td><td>Make incoming call; accept; end</td><td>Music pauses; resumes after call (if spec says so)</td></tr>
+<tr><td>TC_IV_03</td><td>Rear camera</td><td>Ignition ON</td><td>Gear R → D → R</td><td>Camera shows every time within spec time</td></tr>
+<tr><td>TC_IV_04</td><td>Ignition OFF</td><td>Any app open</td><td>Ignition OFF</td><td>Both screens go off; ON again returns to a sane state</td></tr>
+<tr><td>TC_IV_05</td><td>Keyboard lock (negative)</td><td>Speed 30</td><td>Open Navigation, try typing</td><td>Typing blocked with message</td></tr>
+<tr><td>TC_IV_06</td><td>Language German</td><td>—</td><td>Settings → Deutsch; visit every screen</td><td>All text translated; none cut</td></tr>
+</table>
+<p><b>Test design tricks:</b> <b>Boundary value</b> – test at the limit and one step either side (14, 15, 16, 17). <b>Equivalence</b> – you don't need to test every number; one from each group (valid, too low, too high). <b>State change</b> – ON/OFF, connected/disconnected. <b>Error guessing</b> – use experience: "what would a developer forget?"</p>
+
+<h2>D. Quick practice – write this yourself</h2>
+<div class="card"><p>Open the <a href="simulator.html">Mock Car</a> (Build 0.9), find <b>"Navigation ETA earlier than clock"</b> and write a full defect in the template above. Then compare with this answer:</p>
+<details><summary>Show model answer</summary><pre>Title: [Navigation] ETA is earlier than current time for a 25-min route
+Build: 0.9   Severity: Major   Priority: Medium   Reproducible: 5/5
+Steps: 1. Ignition ON. 2. Open Navigation. 3. Type "Airport". 4. Press Start.
+Expected: ETA = current time + 25 min (clock 3:30 PM → ETA 3:55 PM).
+Actual: ETA shows 15:05 PM (clock minus 25 min) – also in 24h format with PM.
+Impact: Driver gets wrong arrival time; loses trust in navigation.
+Evidence: screenshot + video; log line "start nav" at the time.</pre></details></div>
+</main><script src="nav.js"></script></body></html>

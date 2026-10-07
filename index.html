@@ -1,0 +1,38 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HMI &amp; IVI Testing Practice</title><link rel="stylesheet" href="style.css"></head><body>
+<main>
+<h1>Senior Manual Test Engineer – Automotive HMI &amp; IVI<br><small style="font-size:18px;color:var(--muted)">Interview preparation + hands-on practice (mock version)</small></h1>
+<div class="tip good"><b>Welcome!</b> This site is a <b>practice toy</b>. It is not real car software. It behaves like a small car screen so you can <i>see</i> and <i>touch</i> what an HMI/IVI tester does. All words are explained in simple English.</div>
+
+<h2>What is this job, in one minute?</h2>
+<div class="card">
+<p>A modern car has a <b>screen in the middle</b> (music, phone, maps, AC) and a <b>screen behind the steering wheel</b> (speed, fuel, warning lights).</p>
+<ul>
+<li><b>IVI</b> = In-Vehicle Infotainment = the <b>middle screen</b> (info + entertainment).</li>
+<li><b>HMI</b> = Human Machine Interface = <b>anything the person sees/touches to talk to the car</b>: both screens, buttons, warning lights.</li>
+<li><b>Tester's job</b> = check that every button, text, icon and warning behaves <b>exactly as the requirement says</b>, and if not, write a <b>clear defect (bug) report</b> with steps, logs and proof.</li>
+</ul>
+<p>The JD also says: <i>run ready-made automation tests, read the failures, and report them</i>. You <b>don't</b> have to write the automation – you <b>run it and explain why it failed</b>.</p>
+</div>
+
+<h2>Your plan (follow in order)</h2>
+<div class="grid">
+<div class="card"><h3>1️⃣ Learn Basics (45 min)</h3><p>Words, how data flows from car to screen, ADB &amp; logcat, severity vs priority.</p><a class="btn" href="learn.html">Open</a></div>
+<div class="card"><h3>2️⃣ Mock Car (60 min)</h3><p>Play with a fake cluster + IVI. Use the <b>Signal Simulator</b> like real testers do. Hunt <b>22 hidden defects</b>.</p><a class="btn" href="simulator.html">Open</a></div>
+<div class="card"><h3>3️⃣ Eye Test (20 min)</h3><p>6 screens with visual mistakes. Click what looks wrong.</p><a class="btn" href="eyetest.html">Open</a></div>
+<div class="card"><h3>4️⃣ Defects &amp; Reports (30 min)</h3><p>List of common defects, a report template, sample test cases.</p><a class="btn" href="defects.html">Open</a></div>
+<div class="card"><h3>5️⃣ Interview Q&amp;A (60 min)</h3><p>60+ questions with sample answers, matched to <b>your resume</b> and the <b>JD</b>.</p><a class="btn" href="interview.html">Open</a></div>
+</div>
+
+<h2>JD vs your resume (honest check)</h2>
+<table><tr><th>JD wants</th><th>Your resume shows</th><th>How to talk about it</th></tr>
+<tr><td>Manual testing of automotive HMI</td><td>6 months HMI/IVI internship, test cases, Bluetooth &amp; Navigation</td><td>Your <b>strongest</b> point. Give real examples.</td></tr>
+<tr><td>Defect tickets with logs, steps, impact</td><td>Jira, ADB, Logcat, severity/priority</td><td>Learn to explain one defect from start to end (page 4).</td></tr>
+<tr><td>Signal simulation tools</td><td>"Basic vehicle signal simulation", CAN, DBC</td><td>Be honest: "basic level, I know the concept and used it to trigger HMI behaviour". Practice with page 2.</td></tr>
+<tr><td>Run automation suites &amp; analyse failures</td><td>Selenium-Python basics, Jenkins basic</td><td>Say: "I can run suites, read reports/logs and decide: product bug, script problem, or environment problem."</td></tr>
+<tr><td>Distributed international teams, ownership</td><td>Internships</td><td>Prepare 2 short stories (page 5).</td></tr>
+<tr><td><b>"Senior"</b> title</td><td>Fresher</td><td class="warn"><b>Gap!</b> Don't pretend. Say you learn fast, are detail-focused, and can work independently. Ask what the first 3 months look like.</td></tr>
+</table>
+
+<div class="tip warn"><b>Golden rule for tomorrow:</b> If you don't know something, say <i>"I haven't used that tool directly, but I understand the idea, and here is how I would learn it."</i> Honest + calm beats guessing.</div>
+<div class="tip bad"><b>Security note:</b> A GitHub token was shared in chat to publish this site. Delete that token in GitHub → Settings → Developer settings → Tokens after you finish.</div>
+</main><script src="nav.js"></script></body></html>
