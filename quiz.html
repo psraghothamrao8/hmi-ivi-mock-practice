@@ -1,0 +1,187 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Quiz and Mock Interview</title><link rel="stylesheet" href="style.css">
+<style>
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.tabs button{flex:1;min-width:150px;padding:12px;border-radius:10px;border:2px solid var(--line);background:var(--card);color:var(--ink);font-size:16px;font-weight:700;cursor:pointer}
+.tabs button.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.pane{display:none}.pane.on{display:block}
+.qbox{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.qtext{font-size:20px;font-weight:600;margin-bottom:12px}
+.opt{display:block;width:100%;text-align:left;padding:12px 14px;margin:8px 0;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink);font-size:16px;cursor:pointer}
+.opt:hover{border-color:var(--brand)}
+.opt.right{border-color:var(--ok);background:rgba(22,163,74,.15)}
+.opt.wrong{border-color:var(--bad);background:rgba(220,38,38,.12)}
+.expl{margin-top:10px;padding:10px 14px;border-radius:10px;background:rgba(37,99,235,.1);border-left:5px solid var(--brand)}
+.prog{height:10px;background:var(--line);border-radius:6px;overflow:hidden;margin:8px 0}.prog i{display:block;height:100%;background:var(--brand);transition:width .3s}
+.sel{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.sel select{padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:15px}
+.big{font-size:44px;font-weight:800;text-align:center}
+.flash{perspective:1000px;height:240px;cursor:pointer;margin:10px 0}
+.flash .in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.flash.flip .in{transform:rotateY(180deg)}
+.flash .f,.flash .b{position:absolute;inset:0;backface-visibility:hidden;border-radius:16px;display:flex;align-items:center;justify-content:center;padding:20px;text-align:center}
+.flash .f{background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;font-size:34px;font-weight:800}
+.flash .b{background:var(--card);border:2px solid var(--brand);transform:rotateY(180deg);font-size:19px}
+.mockq{font-size:24px;font-weight:700;margin:12px 0;line-height:1.4}
+.timer{font-size:40px;font-weight:800;font-family:Consolas,monospace;text-align:center}
+.timer.low{color:var(--bad)}
+.ans{display:none}.ans.on{display:block}
+.hook{background:rgba(245,158,11,.14);border-radius:8px;padding:6px 10px;margin-top:8px}
+</style></head><body><main>
+<h1>7. Quiz, Flashcards &amp; Mock Interview</h1>
+<div class="tabs" id="tabs"><button data-t="quiz">📝 Quiz (MCQ)</button><button data-t="flash">🃏 Flashcards</button><button data-t="mock">🎤 Mock Interview</button></div>
+
+<!-- ============ QUIZ ============ -->
+<div class="pane" id="p-quiz">
+<div class="tip">Pick an answer. You'll see <b>right/wrong + a simple explanation</b> straight away. Wrong ones are saved so you can practise them again.</div>
+<div class="sel">Topic: <select id="qcat"></select> Questions: <select id="qn"><option value="10">10</option><option value="20">20</option><option value="999">All</option></select>
+<button class="btn" onclick="startQuiz(false)">Start</button><button class="btn alt" onclick="startQuiz(true)">Practise my wrong ones (<span id="wcnt">0</span>)</button></div>
+<div id="quiz"></div>
+</div>
+
+<!-- ============ FLASH ============ -->
+<div class="pane" id="p-flash">
+<div class="tip">Tap the card to flip it. Try to say the meaning <b>out loud</b> before flipping. "Again" puts the card back in the pile.</div>
+<div class="sel"><span id="fstat"></span> <button class="btn alt" onclick="fShuffle()">🔀 Restart &amp; shuffle</button></div>
+<div class="flash" id="fcard" onclick="this.classList.toggle('flip')"><div class="in"><div class="f" id="ff"></div><div class="b" id="fb"></div></div></div>
+<div class="sel" style="justify-content:center"><button class="btn alt" onclick="fNext(false)">🔁 Again</button><button class="btn" onclick="fNext(true)">✅ I knew it</button></div>
+<details><summary>📚 See all terms (glossary)</summary><div id="gloss"></div></details>
+</div>
+
+<!-- ============ MOCK ============ -->
+<div class="pane" id="p-mock">
+<div class="tip"><b>How to practise:</b> 1) Press <b>Next question</b>. 2) Press 🔊 to hear it like an interviewer. 3) Start the timer and <b>answer out loud</b> (aim for 30–90 seconds, use STAR). 4) Then compare with the model answer and rate yourself honestly.</div>
+<div class="sel">Topic: <select id="mcat"></select> <button class="btn" onclick="mNext()">▶ Next question</button> <button class="btn alt" onclick="mNext(true)">Only my "practise again" (<span id="mcnt">0</span>)</button></div>
+<div class="qbox">
+<div id="mmeta" style="color:var(--muted);font-size:14px"></div>
+<div class="mockq" id="mq">Press "Next question" to begin.</div>
+<div class="sel"><button class="btn alt" onclick="speak()">🔊 Read aloud</button><button class="btn alt" onclick="tStart(60)">⏱ 60 s</button><button class="btn alt" onclick="tStart(90)">⏱ 90 s</button><span class="timer" id="tm" style="font-size:28px;margin-left:10px"></span></div>
+<button class="btn" onclick="document.getElementById('ma').classList.add('on')">👀 Show model answer</button>
+<div class="ans" id="ma"><div class="expl" id="mat"></div><div class="hook" id="mah"></div>
+<div class="sel" style="margin-top:10px">How did you do? <button class="btn" style="background:var(--ok)" onclick="rate(true)">😀 Good</button><button class="btn" style="background:var(--warn)" onclick="rate(false)">😐 Practise again</button></div></div>
+</div>
+<div id="mstat" style="margin-top:10px;color:var(--muted)"></div>
+</div>
+</main>
+<script src="nav.js"></script><script src="qa.js"></script><script src="qa-extra.js"></script>
+<script>
+function $(i){return document.getElementById(i)}
+function ls(k,v){try{if(v===undefined)return JSON.parse(localStorage.getItem(k)||'null');localStorage.setItem(k,JSON.stringify(v))}catch(e){return null}}
+/* ---------- TABS ---------- */
+function tab(t){[].forEach.call(document.querySelectorAll('#tabs button'),function(b){b.classList.toggle('on',b.dataset.t===t)});[].forEach.call(document.querySelectorAll('.pane'),function(p){p.classList.toggle('on',p.id==='p-'+t)})}
+$('tabs').onclick=function(e){var b=e.target.closest('button');if(b){tab(b.dataset.t);history.replaceState(null,'','#'+b.dataset.t)}};
+tab((location.hash||'#quiz').slice(1)||'quiz');
+
+/* ---------- QUIZ DATA: [topic, question, options, correct index, explanation] ---------- */
+var MC=[
+['HMI/IVI','What does IVI stand for?',['In-Vehicle Infotainment','Internal Vehicle Interface','Integrated Video Input','In-Vehicle Instrument'],0,'IVI = the centre screen: music, phone, maps, AC, settings.'],
+['HMI/IVI','Which of these is part of the HMI but NOT the IVI?',['Cluster warning lights','Music player','Navigation app','Bluetooth phone screen'],0,'The cluster (behind the steering wheel) is HMI, but it is not infotainment.'],
+['HMI/IVI','At ignition ON, all warning lamps light for ~1.5 s, then go off. This is…',['A defect','The bulb check – expected','A CAN error','Low battery'],1,'The bulb check proves every lamp works. Don\'t report it as a bug!'],
+['HMI/IVI','A RED warning light usually means…',['Danger – act now / stop safely','A system is switched on','High beam is on','Just information'],0,'Red = danger, Amber = warning, Green = on, Blue = high beam.'],
+['HMI/IVI','A BLUE light on the cluster usually means…',['High beam is ON','Engine is cold','Bluetooth connected','Door open'],0,'Blue is reserved for the high beam headlights.'],
+['HMI/IVI','Requirement: typing in navigation is locked above 5 km/h. At 60 km/h you CAN type. Best severity?',['Trivial','Minor','Critical/Major – safety (driver distraction)','Not a bug'],2,'Anything that takes the driver\'s eyes off the road while moving is a safety issue.'],
+['HMI/IVI','"Audio ducking" means…',['Music gets quieter while a nav prompt plays, then returns','Music is muted forever','The song changes','Bass is boosted'],0,'Ducking = music "bends down" so the voice prompt is heard.'],
+['HMI/IVI','The rear camera should open when…',['Gear R is selected','Speed is above 30','A door opens','Ignition is OFF'],0,'Reverse gear → camera. Test it EVERY time, not just once.'],
+['HMI/IVI','Which Bluetooth profile copies contacts to the car?',['PBAP','A2DP','HFP','AVRCP'],0,'PBAP = Phone Book Access Profile.'],
+['HMI/IVI','Which Bluetooth profile streams music?',['A2DP','PBAP','MAP','HFP'],0,'A2DP = music streaming. AVRCP = controls + song info.'],
+['HMI/IVI','Song title and play/pause from the car use which profile?',['AVRCP','HFP','PBAP','MAP'],0,'AVRCP = Audio/Video Remote Control Profile.'],
+['HMI/IVI','Phone calls through the car speakers use…',['HFP','A2DP','PBAP','MAP'],0,'HFP = Hands-Free Profile.'],
+['HMI/IVI','Android Automotive is…',['Android running inside the car itself','The phone app projected on the car screen','A car brand','A CAN tool'],0,'Android AUTO = phone projected. Android AUTOMOTIVE = built into the car.'],
+['CAN & networks','Two ECUs send on CAN at the same time. Which message wins?',['The one with the LOWER ID','The one with the higher ID','The longer one','Random'],0,'Lower ID = higher priority. This is called arbitration.'],
+['CAN & networks','0x1F in decimal is…',['31','15','16','255'],0,'1×16 + 15 (F) = 31.'],
+['CAN & networks','0xFF in decimal is…',['255','100','256','16'],0,'15×16 + 15 = 255. One byte max.'],
+['CAN & networks','A DBC file is…',['A dictionary that maps CAN bytes to named signals','A log file','A defect report','A software build'],0,'Without the DBC, CAN data is just hex numbers.'],
+['CAN & networks','Raw value 0x64, factor 0.5, offset 0. Physical value?',['50','100','64','32'],0,'0x64 = 100. 100 × 0.5 = 50.'],
+['CAN & networks','Raw 0x50, factor 1, offset −40 (°C). Temperature?',['40 °C','80 °C','120 °C','−40 °C'],0,'0x50 = 80. 80 − 40 = 40 °C.'],
+['CAN & networks','DoorStatus byte = 0x03. Bit0 = driver, bit1 = passenger. Which doors are open?',['Driver AND passenger','Only driver','Only passenger','None'],0,'0x03 = binary 0011 → bit0 = 1 and bit1 = 1.'],
+['CAN & networks','LIN is mainly used for…',['Simple, slow things like window switches and mirrors','Rear cameras','OTA updates','Engine control'],0,'LIN = cheap "village lane" network.'],
+['CAN & networks','Which network is best for cameras and big data?',['Automotive Ethernet','LIN','Classic CAN','K-Line'],0,'Cameras need a lot of bandwidth → Ethernet.'],
+['CAN & networks','How many data bytes can a CLASSIC CAN message carry?',['8','64','1','1024'],0,'Classic CAN = 8 bytes. CAN FD = up to 64.'],
+['CAN & networks','The gateway ECU…',['Passes messages between different networks','Shows speed on screen','Stores music','Charges the battery'],0,'Gateway = the post office of the car.'],
+['CAN & networks','KL15 is…',['The ignition power line','The always-on battery line','A CAN ID','A Bluetooth profile'],0,'KL15 = ignition. KL30 = battery, always on.'],
+['CAN & networks','The CAN trace shows the right speed signal, but the cluster shows the old value. Where is the problem most likely?',['On the receiving side (gateway or HMI), not the sending ECU','In the sending ECU','In the DBC of the trace','Nowhere – it\'s fine'],0,'Signal was SENT correctly → the problem is after that. Attach the trace as proof.'],
+['Automotive process','In the V-model, SYSTEM testing checks…',['System requirements','Single lines of code','Module design','Marketing plans'],0,'Each test level checks the design level opposite it on the V.'],
+['Automotive process','ASIL D means…',['The highest safety level','Not safety-related','Lowest safety level','A diagnostic code'],0,'ASIL A (lowest) → D (highest). QM = not safety-related.'],
+['Automotive process','"QM" in ISO 26262 means…',['Normal quality – not safety-relevant','Quick Mode','Quality Maximum = most critical','A test tool'],0,'Example: the radio is usually QM.'],
+['Automotive process','ASPICE is mainly about…',['Process quality and traceability','Car speed','Bluetooth','Screen colours'],0,'Did you follow the process, and can you prove it?'],
+['Automotive process','HIL testing means…',['Real hardware + a simulated car','Only a math model','Driving on a real road','Code review'],0,'HIL = the real IVI/cluster on a bench with a simulator.'],
+['Automotive process','UDS service 0x22 is used to…',['Read data, e.g. software version','Clear error codes','Reset the ECU','Flash software'],0,'0x22 Read, 0x19 read DTCs, 0x14 clear DTCs.'],
+['Automotive process','UDS service 0x19 is used to…',['Read DTCs (error codes)','Write data','Unlock security','Change session'],0,'0x19 = read DTCs.'],
+['Automotive process','A negative UDS response starts with…',['0x7F','0x62','0x40','0x00'],0,'Positive = request + 0x40 (0x22 → 0x62). Negative = 0x7F.'],
+['Automotive process','A DTC starting with "U" is about…',['Network / communication','Engine','Brakes','Seats'],0,'P = powertrain, C = chassis, B = body, U = network.'],
+['Automotive process','OEM means…',['The car company','A Bluetooth chip','A test tool','A CAN ID'],0,'OEM = car maker. Tier 1 = big supplier (e.g. makes the IVI).'],
+['Automotive process','SOP means…',['Start Of Production','Standard Operating Process','Signal Output Port','Speed Over Plan'],0,'The date the car starts being built – software must be ready.'],
+['Automotive process','An RTM (traceability matrix) helps you…',['See which requirements have tests and which do not','Decode CAN','Record video','Flash builds'],0,'It shows gaps in coverage.'],
+['Testing concepts','Severity vs priority:',['Severity = how bad; Priority = how soon to fix','They are the same','Severity = how soon; Priority = how bad','Both are decided by the developer'],0,'Tester sets severity; the team/PO decides priority.'],
+['Testing concepts','The company name is spelled wrong on the start screen. Severity / priority?',['Low severity, HIGH priority','High severity, low priority','Critical, critical','Not a bug'],0,'Doesn\'t break function, but it\'s embarrassing → fix fast.'],
+['Testing concepts','Testing 15, 16, 17 when the minimum is 16 is called…',['Boundary value analysis','Smoke testing','Exploratory testing','Regression'],0,'Test at the limit and one step on each side.'],
+['Testing concepts','A smoke test is…',['A quick check that the build is stable enough to test','A full test of everything','A performance test','A user survey'],0,'If smoke fails, stop and report the build.'],
+['Testing concepts','Regression testing means…',['Re-checking old features after a change','Testing only new features','Testing with users','Writing requirements'],0,'Did the fix break something else?'],
+['Testing concepts','You can\'t run the call tests because Bluetooth won\'t pair. Mark them as…',['Blocked','Passed','Failed','Not applicable'],0,'Blocked = can\'t run because of another problem. Link the blocking defect.'],
+['Testing concepts','Verification asks…',['Are we building the product RIGHT?','Are we building the RIGHT product?','Is it cheap?','Is the code pretty?'],0,'Verification = matches spec. Validation = meets the real need.'],
+['Testing concepts','Exploratory testing is…',['Learning, designing and testing at the same time','Running only scripts','Testing in a real car only','Reading code'],0,'Free testing with notes – great for finding surprises.'],
+['Testing concepts','Correct order:',['Error (human) → Defect (in code) → Failure (seen by user)','Failure → Error → Defect','Defect → Error → Failure','All the same'],0,'A mistake creates a bug, and the bug causes the visible failure.'],
+['Testing concepts','Retesting vs regression:',['Retest = the fixed bug; Regression = things around it','The same thing','Retest = new features','Regression = only automation'],0,'Do both after a fix.'],
+['Testing concepts','A good ENTRY criterion for testing is…',['Build installed and smoke test passed','All defects are closed','Customer is happy','Release is done'],0,'Entry = when we can START. Exit = when we can STOP.'],
+['Testing concepts','"The app should not crash" (not written in the spec) is an example of…',['An implicit requirement','An explicit requirement','A test plan','A DTC'],0,'Implicit = expected by everyone even if not written.'],
+['Testing concepts','HMI manual testing is mostly…',['Black box testing','White box testing','Unit testing','Code review'],0,'You test from the outside, without seeing the code.'],
+['Defects','Best defect title:',['[Media] Elapsed time shows 0:75 after 75 s of playback','Media bug','Time wrong!!!','Please fix this ASAP'],0,'Title = where + what, specific.'],
+['Defects','What should NOT be in a defect report?',['Blaming a developer','Steps to reproduce','Build number','Logs and video'],0,'Stay factual and polite – it\'s about the product.'],
+['Defects','A bug happens 2 out of 10 tries. You should…',['Report it as intermittent with the rate (2/10) and logs','Ignore it','Report as always happening','Wait for it to happen more'],0,'Intermittent bugs still matter – evidence is key.'],
+['Defects','Before logging a new defect you should…',['Search for duplicates','Restart your laptop','Ask for a holiday','Close old defects'],0,'Avoid duplicates; add info to the existing ticket instead.'],
+['Defects','You retest a fixed defect and it still fails. New status?',['Reopened','Closed','Duplicate','Deferred'],0,'Reopen with new evidence and build number.'],
+['Defects','Impact analysis answers…',['What happens to users/product if this ships','Who wrote the code','How many lines changed','Which laptop was used'],0,'Safety? Legal? How many users? Workaround?'],
+['Logs & ADB','Clear old logcat logs before reproducing:',['adb logcat -c','adb clear','adb devices','adb reboot'],0,'Clear → reproduce → save. Clean logs are easier to read.'],
+['Logs & ADB','List connected Android devices:',['adb devices','adb list','adb show','adb ping'],0,'First command when the IVI is connected.'],
+['Logs & ADB','ANR means…',['App Not Responding (froze)','Android New Release','Audio Not Ready','A CAN error'],0,'The app froze for ~5 s or more.'],
+['Logs & ADB','Which log lines do you look at first?',['E (error) and F (fatal)','V (verbose)','D (debug)','I (info)'],0,'Start with errors, exceptions and crashes near the bug time.'],
+['Logs & ADB','Record the IVI screen with ADB:',['adb shell screenrecord /sdcard/v.mp4','adb video','adb camera','adb logcat -v'],0,'Then adb pull to copy it to your laptop.'],
+['Logs & ADB','Many automotive ECUs log in which format?',['DLT','PDF','MP3','DBC'],0,'DLT = Diagnostic Log and Trace (view with DLT Viewer).'],
+['Logs & ADB','For a Bluetooth pairing bug, which extra log helps most?',['btsnoop HCI log','DLT','CAN trace','Excel sheet'],0,'It records Bluetooth packets.'],
+['Logs & ADB','A big zip with all logs and state for developers:',['adb bugreport','adb zip','adb pull all','adb logcat -b'],0,'Great for complex or crash bugs.'],
+['Automation','An automated test fails for the first time. First step?',['Check environment (device, build) and re-run once','Raise a critical defect immediately','Delete the test','Ignore it'],0,'Rule out environment/flaky issues before raising a product bug.'],
+['Automation','A test passes 3 times out of 5. It is…',['Flaky – report the pass rate and look for timing/environment causes','Passed','Failed','Blocked'],0,'Flaky tests need investigation, not ignoring.'],
+['Automation','The script fails because a button was renamed in the new build. This is most likely…',['A script issue – inform the automation owner (and check the rename was intended)','A critical product crash','A CAN problem','Network failure'],0,'Not every failure is a product bug!'],
+['Automation','Jenkins is used to…',['Run jobs/test suites automatically','Decode CAN','Write requirements','Pair Bluetooth'],0,'CI tool – runs suites on new builds.'],
+['Automation','A good test report includes…',['Totals (pass/fail/blocked), open defects, risks, build tested','Only "all good"','Only the failed test names','Developer names'],0,'Numbers + defects + risks + build.'],
+['Automation','Which is best suited for automation?',['Stable, repeated regression checks','A brand-new feature\'s first look','Checking visual beauty','One-time tests'],0,'Automate what repeats; explore manually what is new or visual.'],
+['Eye test','Climate shows driver 22 °C and passenger 72 °F. Defect type?',['Unit inconsistency','Spelling','Crash','Performance'],0,'Units must match across the screen.'],
+['Eye test','Navigation ETA is earlier than the current time. Defect type?',['Logic/calculation error','Translation','Colour','Sound'],0,'ETA must be now + trip time.'],
+['Eye test','Toggle looks ON (blue) but the label says "Off". Defect type?',['State mismatch between icon and text','Performance','Network','No defect'],0,'Always check icon + text together.'],
+['Eye test','In German, the tile shows "Einstellu…". Defect type?',['Text truncation in localization','Correct behaviour','A CAN error','Audio issue'],0,'Long German words must fit or wrap properly.']
+];
+var cats=['All'].concat(MC.map(function(x){return x[0]}).filter(function(v,i,a){return a.indexOf(v)===i}));
+$('qcat').innerHTML=cats.map(function(c){return '<option>'+c+'</option>'}).join('');
+var WR=ls('wrongQ')||[];$('wcnt').textContent=WR.length;
+var QS=[],qi=0,score=0;
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+function startQuiz(wrongOnly){var c=$('qcat').value,n=+$('qn').value;var pool=MC.map(function(x,i){return i}).filter(function(i){return wrongOnly?WR.indexOf(i)>-1:(c==='All'||MC[i][0]===c)});if(!pool.length){$('quiz').innerHTML='<p>Nothing to practise here yet 🎉</p>';return}QS=shuffle(pool).slice(0,n);qi=0;score=0;showQ()}
+function showQ(){if(qi>=QS.length)return endQ();var x=MC[QS[qi]],ord=shuffle(x[2].map(function(_,i){return i}));
+ $('quiz').innerHTML='<div class="qbox"><div style="color:var(--muted);font-size:14px">'+x[0]+' · Question '+(qi+1)+' of '+QS.length+' · Score '+score+'</div><div class="prog"><i style="width:'+(qi/QS.length*100)+'%"></i></div><div class="qtext">'+x[1]+'</div>'+ord.map(function(o){return '<button class="opt" data-o="'+o+'">'+x[2][o]+'</button>'}).join('')+'<div id="qe"></div></div>';
+ [].forEach.call(document.querySelectorAll('.opt'),function(b){b.onclick=function(){answer(+b.dataset.o)}})}
+function answer(o){var x=MC[QS[qi]],ok=o===x[3],id=QS[qi];[].forEach.call(document.querySelectorAll('.opt'),function(b){b.disabled=true;var v=+b.dataset.o;if(v===x[3])b.classList.add('right');else if(v===o)b.classList.add('wrong')});
+ if(ok){score++;WR=WR.filter(function(i){return i!==id})}else if(WR.indexOf(id)<0)WR.push(id);ls('wrongQ',WR);$('wcnt').textContent=WR.length;
+ $('qe').innerHTML='<div class="expl">'+(ok?'✅ <b>Correct!</b> ':'❌ <b>Not quite.</b> ')+x[4]+'</div><div style="margin-top:10px"><button class="btn" id="nx">'+(qi+1<QS.length?'Next →':'See result')+'</button></div>';jargonize($('qe'));$('nx').onclick=function(){qi++;showQ()};$('nx').focus()}
+function endQ(){var p=Math.round(score/QS.length*100);$('quiz').innerHTML='<div class="qbox" style="text-align:center"><div class="big">'+p+'%</div><p>'+score+' of '+QS.length+' correct</p><p>'+(p>=80?'🎉 Great! You are ready for this topic.':p>=50?'👍 Good. Review the explanations and try "Practise my wrong ones".':'💪 Keep going – read the Basics / Automotive pages, then retry.')+'</p><button class="btn" onclick="startQuiz(false)">Try again</button></div>'}
+
+/* ---------- FLASHCARDS ---------- */
+var FK=[],fi=0,known=0;
+function fShuffle(){FK=shuffle(Object.keys(JARGON));fi=0;known=0;fShow()}
+function fShow(){var c=$('fcard');c.classList.remove('flip');if(!FK.length){$('ff').textContent='🎉 Done!';$('fb').textContent='You went through every card. Press Restart to go again.';$('fstat').textContent='All cards done';return}
+ var k=FK[0],was=c.dataset.f;c.dataset.f=1;function put(){$('ff').textContent=k;$('fb').textContent=JARGON[k]}if(was)setTimeout(put,150);else put();$('fstat').textContent='Cards left: '+FK.length+' · Known: '+known}
+function fNext(k){if(!FK.length)return;var c=FK.shift();if(k)known++;else FK.splice(Math.min(FK.length,3+Math.floor(Math.random()*4)),0,c);fShow()}
+$('gloss').innerHTML='<table>'+Object.keys(JARGON).sort(function(a,b){return a.toLowerCase()<b.toLowerCase()?-1:1}).map(function(k){return '<tr><td><b>'+k+'</b></td><td>'+JARGON[k]+'</td></tr>'}).join('')+'</table>';
+fShuffle();
+
+/* ---------- MOCK INTERVIEW ---------- */
+var ALL=[];Q.forEach(function(s){s[1].forEach(function(x){ALL.push({c:s[0],q:x[0],a:x[1],h:x[2]})})});
+$('mcat').innerHTML='<option>All</option>'+Q.map(function(s){return '<option>'+s[0]+'</option>'}).join('');
+var PA=ls('practiceAgain')||[],cur=null,good=0,done=0,tmr=null;$('mcnt').textContent=PA.length;
+function mNext(onlyPA){var c=$('mcat').value,pool=ALL.filter(function(x){return onlyPA?PA.indexOf(x.q)>-1:(c==='All'||x.c===c)});if(!pool.length){$('mq').textContent='Nothing here yet 🎉';return}
+ var nx=pool[Math.floor(Math.random()*pool.length)];if(pool.length>1&&cur&&nx.q===cur.q)return mNext(onlyPA);cur=nx;
+ $('mmeta').textContent=cur.c;$('mq').textContent=cur.q;$('ma').classList.remove('on');$('mat').innerHTML=cur.a;$('mah').innerHTML=cur.h?'💡 <b>Remember:</b> '+cur.h:'';$('mah').style.display=cur.h?'block':'none';jargonize($('mat'));tStop();$('tm').textContent=''}
+function speak(){if(!cur||!window.speechSynthesis)return;speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(cur.q);u.rate=.92;u.lang='en-IN';speechSynthesis.speak(u)}
+function tStop(){if(tmr){clearInterval(tmr);tmr=null}$('tm').classList.remove('low')}
+function tStart(s){tStop();var left=s;$('tm').textContent=left+'s';tmr=setInterval(function(){left--;$('tm').textContent=left>0?left+'s':'⏰ Time!';$('tm').classList.toggle('low',left<=10);if(left<=0){tStop();$('tm').classList.add('low')}},1000)}
+function rate(ok){if(!cur)return;done++;if(ok){good++;PA=PA.filter(function(q){return q!==cur.q})}else if(PA.indexOf(cur.q)<0)PA.push(cur.q);ls('practiceAgain',PA);$('mcnt').textContent=PA.length;$('mstat').textContent='This session: '+done+' answered · '+good+' rated good · '+PA.length+' marked "practise again" · Total questions available: '+ALL.length;mNext()}
+$('mstat').textContent='Total questions available: '+ALL.length;
+</script></body></html>

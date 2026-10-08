@@ -1,0 +1,58 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>My Doubts</title><link rel="stylesheet" href="style.css">
+<style>
+.doubt{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px 18px 14px;margin:16px 0}
+.doubt .qh{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.doubt .qh span{color:var(--muted);font-size:14px}
+.mapc{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:12px 0}
+.mapc a{display:block;border-radius:14px;padding:14px;color:#fff;text-decoration:none;text-align:center;font-weight:700}
+.mapc a small{display:block;font-weight:400;opacity:.9;margin-top:4px}
+</style></head><body><main>
+<h1>💬 My Doubts (asked &amp; answered)</h1>
+<p>Every question you ask in chat is answered here too, newest first, so you can revise them later.</p>
+
+<div class="doubt" id="d1">
+<div class="qh"><h2 style="border:0;margin:14px 0 4px">#1 – "It's an automotive tester role. What else can they ask? I want to be able to answer anything."</h2><span>8 Oct 2026</span></div>
+<p><b>Short answer:</b> An automotive tester interview usually checks <b>6 areas</b>. You already know the basics of most of them from your internship. Click each box to study that area:</p>
+<div class="mapc">
+<a href="learn.html" style="background:#2563eb">1. Testing basics<small>test cases, STLC, severity/priority, smoke/regression</small></a>
+<a href="automotive.html#net" style="background:#0891b2">2. Car networks<small>ECU, CAN, LIN, Ethernet, DBC, gateway</small></a>
+<a href="automotive.html#feat" style="background:#7c3aed">3. HMI/IVI features<small>cluster, Bluetooth, nav, camera, media</small></a>
+<a href="automotive.html#vmodel" style="background:#16a34a">4. Process &amp; safety<small>V-model, ASPICE, ISO 26262, traceability</small></a>
+<a href="automotive.html#logs" style="background:#d97706">5. Logs &amp; debugging<small>ADB, logcat, DLT, CAN trace, UDS/DTC</small></a>
+<a href="interview.html" style="background:#dc2626">6. You as a person<small>intro, stories, ownership, teamwork</small></a>
+</div>
+
+<h3>The 15 facts you must know by heart</h3>
+<ol>
+<li><b>HMI</b> = everything the driver sees/touches. <b>IVI</b> = the centre screen (infotainment).</li>
+<li>Data path: <b>ECU → CAN → Gateway → IVI → Android → HMI screen</b>.</li>
+<li>A CAN message = <b>ID + up to 8 data bytes</b>. The <b>DBC</b> file explains the bytes. <b>Lower ID = higher priority.</b></li>
+<li><b>CAN</b> = main network, <b>LIN</b> = slow/simple (switches), <b>Ethernet</b> = big data (cameras).</li>
+<li><b>Signal simulation</b> = a tool (like CANoe) pretends to be the car so we test on a bench → this is <b>HIL</b>.</li>
+<li><b>V-model</b>: left = define/build, right = test. HMI testers mostly do <b>system + integration</b> testing.</li>
+<li><b>Severity</b> = how bad. <b>Priority</b> = how soon. Example: logo typo = low severity, high priority.</li>
+<li>Defect = title, build, steps, expected vs actual, frequency, severity, <b>impact</b>, <b>logs + video</b>.</li>
+<li>Automation failure → check <b>environment → script → product bug → flaky?</b> before raising a defect.</li>
+<li>ADB: <code>adb devices</code>, <code>adb logcat -c</code>, <code>adb logcat -v time &gt; log.txt</code>, <code>adb bugreport</code>.</li>
+<li>Bluetooth: <b>HFP</b> calls, <b>A2DP</b> music, <b>AVRCP</b> controls, <b>PBAP</b> contacts, <b>MAP</b> SMS.</li>
+<li>Telltale colours: <b>red</b> danger, <b>amber</b> warning, <b>green</b> on, <b>blue</b> high beam. <b>Bulb check</b> at start is normal.</li>
+<li><b>ISO 26262</b> = safety, <b>ASIL A–D</b> (D highest). <b>ASPICE</b> = process + traceability.</li>
+<li><b>UDS</b>: 0x22 read version, 0x19 read DTCs, 0x14 clear DTCs. <b>DTC</b> letters: P, C, B, <b>U = network</b>.</li>
+<li><b>Driver distraction</b>: typing/video must be locked while driving – breaking this is a <b>safety</b> defect.</li>
+</ol>
+
+<h3>How to handle a question you've never heard</h3>
+<div class="tip good">1️⃣ Stay calm and repeat the question in your own words (this gives you thinking time).<br>2️⃣ Connect it to something you know: "In my internship, I saw something similar when…"<br>3️⃣ If you really don't know: "I haven't worked with that yet. My understanding is … and I'd learn it by …"</div>
+
+<h3>Your study order for today</h3>
+<ol>
+<li><a href="automotive.html">Automotive A–Z</a> – click every diagram (45 min)</li>
+<li><a href="quiz.html#quiz">Quiz</a> – all topics, aim for 80 %+; then "Practise my wrong ones" (30 min)</li>
+<li><a href="quiz.html#flash">Flashcards</a> – go through all terms once (15 min)</li>
+<li><a href="quiz.html#mock">Mock Interview</a> – 10–15 questions spoken out loud with the timer (30 min)</li>
+<li><a href="simulator.html">Mock Car</a> + <a href="eyetest.html">Eye Test</a> once more (20 min)</li>
+</ol>
+</div>
+
+<div class="tip">Have another doubt? Just ask in the chat – it'll be added here as #2, #3, …</div>
+</main><script src="nav.js"></script></body></html>

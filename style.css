@@ -18,3 +18,4 @@ details{background:var(--card);border:1px solid var(--line);border-radius:10px;m
 .tag{display:inline-block;font-size:12px;padding:1px 8px;border-radius:99px;background:var(--brand);color:#fff;margin-right:4px}
 .tag.s1{background:var(--bad)}.tag.s2{background:var(--warn)}.tag.s3{background:#64748b}
 input[type=search]{width:100%;padding:10px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:16px}
+h2[id],h2{scroll-margin-top:80px}

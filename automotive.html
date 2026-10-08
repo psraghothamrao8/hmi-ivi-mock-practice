@@ -1,0 +1,394 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Automotive A to Z</title><link rel="stylesheet" href="style.css">
+<style>
+main{max-width:1100px}
+.toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px}
+.toc a{display:block;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;text-decoration:none;color:var(--ink);font-size:15px}
+.toc a:hover{border-color:var(--brand)}
+.toc a b{display:block;font-size:22px}
+svg text{font-family:system-ui,Segoe UI,sans-serif}
+.svgwrap{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px;overflow-x:auto}
+.svgwrap svg{min-width:640px;width:100%;height:auto;display:block}
+.ctl{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.ctl button{font-size:14px}
+.result{background:#0b0e14;color:#e5e7eb;border-radius:10px;padding:10px 14px;font-family:Consolas,monospace;font-size:14px;min-height:70px;white-space:pre-wrap}
+.ok{color:var(--ok);font-weight:700}.no{color:var(--bad);font-weight:700}
+.ex{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:10px 0}
+.ex input[type=text]{padding:7px;border-radius:6px;border:1px solid var(--line);width:120px;font-size:15px;background:var(--bg);color:var(--ink)}
+.frame{font-family:Consolas,monospace;font-size:18px;background:#0b0e14;color:#9fe3a1;padding:6px 10px;border-radius:8px;display:inline-block}
+.bits{display:inline-flex;gap:3px;margin:4px 0}.bits span{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:5px;background:var(--bg);border:1px solid var(--line);font-family:Consolas;font-size:14px}.bits span.on{background:var(--brand);color:#fff}
+.step{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}.step button{flex:1;min-width:120px;padding:10px;border-radius:10px;border:2px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;font-size:15px;font-weight:600}
+.step button.on{border-color:var(--brand);background:var(--brand);color:#fff}
+.panel{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--brand);border-radius:10px;padding:12px 16px;min-height:80px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.cards button{padding:12px 8px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;font-size:15px;text-align:center}
+.cards button.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+.tt{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tt .nm{flex:1;min-width:160px}
+.cb{border:0;border-radius:6px;padding:6px 10px;cursor:pointer;font-weight:700;font-size:13px}
+.c-red{background:#dc2626;color:#fff}.c-amb{background:#f59e0b;color:#000}.c-grn{background:#16a34a;color:#fff}.c-blu{background:#2563eb;color:#fff}
+.ladder{display:flex;gap:4px;align-items:flex-end;margin:10px 0}.ladder div{flex:1;text-align:center;border-radius:8px 8px 0 0;color:#fff;font-weight:700;padding:6px 2px;font-size:14px}
+.timeline{display:flex;gap:4px;flex-wrap:wrap}.timeline button{flex:1;min-width:110px;padding:10px 6px;border:0;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;background:var(--card);color:var(--ink);border:2px solid var(--line)}
+.timeline button.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+.day{border-left:3px solid var(--brand);padding-left:16px;margin-left:8px}.day div{position:relative;margin:10px 0}.day div:before{content:"";position:absolute;left:-23px;top:6px;width:11px;height:11px;border-radius:50%;background:var(--brand)}
+</style></head><body><main>
+<h1>2. Automotive Testing A–Z (visual + interactive)</h1>
+<div class="tip good"><b>Why this page?</b> They said the role is "automotive tester". So besides HMI/IVI, they may ask about <b>car networks, diagnostics, test levels, safety standards, tools and processes</b>. Here everything is explained simply, with things you can <b>click and try</b>. You do <b>not</b> need to be an expert – you need to <b>understand the idea</b> and explain it calmly.</div>
+
+<div class="toc">
+<a href="#chain"><b>🏭</b>Who makes the car</a>
+<a href="#net"><b>🔌</b>Car network (animated)</a>
+<a href="#canlab"><b>🔢</b>CAN message lab</a>
+<a href="#buses"><b>🛣️</b>CAN, LIN, Ethernet…</a>
+<a href="#vmodel"><b>✔️</b>V-model</a>
+<a href="#levels"><b>🧪</b>MIL / SIL / HIL</a>
+<a href="#bench"><b>🖥️</b>Test bench</a>
+<a href="#diag"><b>🩺</b>Diagnostics &amp; DTC</a>
+<a href="#tell"><b>🚨</b>Warning light colours</a>
+<a href="#feat"><b>🎵</b>IVI features explorer</a>
+<a href="#bt"><b>📶</b>Bluetooth profiles</a>
+<a href="#power"><b>🔑</b>Power modes</a>
+<a href="#std"><b>📜</b>Safety &amp; standards</a>
+<a href="#logs"><b>📄</b>Which log to check</a>
+<a href="#tools"><b>🧰</b>Tools you'll hear</a>
+<a href="#rtm"><b>🔗</b>Traceability</a>
+<a href="#dayin"><b>📅</b>A day as HMI tester</a>
+</div>
+
+<!-- ============ CHAIN ============ -->
+<h2 id="chain">🏭 Who makes the car? (OEM → Tier 1 → Tier 2)</h2>
+<div class="svgwrap"><svg viewBox="0 0 820 150">
+<defs><marker id="ar" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="#64748b"/></marker></defs>
+<rect x="10" y="30" width="180" height="80" rx="12" fill="#2563eb"/><text x="100" y="62" fill="#fff" text-anchor="middle" font-weight="700" font-size="17">OEM</text><text x="100" y="86" fill="#fff" text-anchor="middle" font-size="13">Car company</text><text x="100" y="102" fill="#dbeafe" text-anchor="middle" font-size="11">Tata, Mahindra, BMW…</text>
+<rect x="290" y="30" width="180" height="80" rx="12" fill="#0891b2"/><text x="380" y="62" fill="#fff" text-anchor="middle" font-weight="700" font-size="17">Tier 1</text><text x="380" y="86" fill="#fff" text-anchor="middle" font-size="13">Makes IVI / cluster</text><text x="380" y="102" fill="#cffafe" text-anchor="middle" font-size="11">Bosch, Harman, Continental…</text>
+<rect x="570" y="30" width="180" height="80" rx="12" fill="#7c3aed"/><text x="660" y="62" fill="#fff" text-anchor="middle" font-weight="700" font-size="17">Tier 2 / Services</text><text x="660" y="86" fill="#fff" text-anchor="middle" font-size="13">Chips, software, TESTING</text><text x="660" y="102" fill="#ede9fe" text-anchor="middle" font-size="11">← you may sit here</text>
+<line x1="290" y1="70" x2="196" y2="70" stroke="#64748b" stroke-width="3" marker-end="url(#ar)"/><line x1="570" y1="70" x2="476" y2="70" stroke="#64748b" stroke-width="3" marker-end="url(#ar)"/>
+<text x="243" y="60" text-anchor="middle" font-size="11" fill="#64748b">delivers to</text><text x="523" y="60" text-anchor="middle" font-size="11" fill="#64748b">delivers to</text>
+</svg></div>
+<div class="tip">The JD says "customer-provided test frameworks" and "customer proxy team". That means: <b>your company tests for a customer</b> (an OEM or a Tier 1). The "customer proxy" = people who speak for that customer. They give you the tools and test suites; you run them, analyse, and report.</div>
+
+<!-- ============ NETWORK ============ -->
+<h2 id="net">🔌 How a signal travels – watch it move</h2>
+<p>Click a button. A dot (the message) travels from the ECU, over the CAN bus, through the gateway, to the screen. Then try <b>"Break the gateway"</b> and send again – this is how real bugs look: <i>the signal is sent but never arrives</i>.</p>
+<div class="svgwrap"><svg id="netsvg" viewBox="0 0 820 320">
+<g font-size="13" text-anchor="middle">
+<rect x="20" y="60" width="100" height="50" rx="8" fill="#334155"/><text x="70" y="82" fill="#fff" font-weight="700">Engine ECU</text><text x="70" y="99" fill="#cbd5e1" font-size="11">fuel, RPM</text>
+<rect x="135" y="60" width="100" height="50" rx="8" fill="#334155"/><text x="185" y="82" fill="#fff" font-weight="700">ABS ECU</text><text x="185" y="99" fill="#cbd5e1" font-size="11">wheel speed</text>
+<rect x="250" y="60" width="100" height="50" rx="8" fill="#334155"/><text x="300" y="82" fill="#fff" font-weight="700">Body ECU</text><text x="300" y="99" fill="#cbd5e1" font-size="11">doors, belts</text>
+<rect x="365" y="60" width="100" height="50" rx="8" fill="#334155"/><text x="415" y="82" fill="#fff" font-weight="700">Gearbox ECU</text><text x="415" y="99" fill="#cbd5e1" font-size="11">gear P R N D</text>
+<g stroke="#94a3b8" stroke-width="3"><line x1="70" y1="110" x2="70" y2="190"/><line x1="185" y1="110" x2="185" y2="190"/><line x1="300" y1="110" x2="300" y2="190"/><line x1="415" y1="110" x2="415" y2="190"/><line x1="20" y1="190" x2="480" y2="190" stroke="#f59e0b" stroke-width="6"/>
+<line x1="580" y1="190" x2="810" y2="190" stroke="#22c55e" stroke-width="6"/><line x1="650" y1="110" x2="650" y2="190"/><line x1="755" y1="110" x2="755" y2="190"/></g>
+<text x="130" y="215" fill="#d97706" font-weight="700" font-size="12">Powertrain / Body CAN</text>
+<text x="690" y="215" fill="#16a34a" font-weight="700" font-size="12">Infotainment CAN / Ethernet</text>
+<rect id="gw" x="480" y="160" width="100" height="60" rx="8" fill="#0891b2"/><text x="530" y="187" fill="#fff" font-weight="700">Gateway</text><text id="gwt" x="530" y="205" fill="#cffafe" font-size="11">working ✔</text>
+<rect x="600" y="60" width="100" height="50" rx="8" fill="#1d4ed8"/><text x="650" y="82" fill="#fff" font-weight="700">Cluster</text><text x="650" y="99" fill="#dbeafe" font-size="11">speed, warnings</text>
+<rect x="705" y="60" width="105" height="50" rx="8" fill="#7c3aed"/><text x="757" y="82" fill="#fff" font-weight="700">IVI (Android)</text><text x="757" y="99" fill="#ede9fe" font-size="11">screen apps</text>
+<rect x="610" y="255" width="110" height="40" rx="8" fill="#475569"/><text x="665" y="280" fill="#fff" font-weight="700">📱 Phone</text>
+<path d="M720,275 Q790,260 790,112" fill="none" stroke="#a78bfa" stroke-width="2" stroke-dasharray="6 5"/><text x="800" y="240" fill="#7c3aed" font-size="11" text-anchor="end">Bluetooth</text>
+</g>
+<circle id="dot" r="9" fill="#ef4444" stroke="#fff" stroke-width="2" style="display:none"/><circle id="dot2" r="9" fill="#ef4444" stroke="#fff" stroke-width="2" style="display:none"/>
+</svg></div>
+<div class="ctl">
+<button class="btn" onclick="send('speed')">🚗 Speed = 60 km/h</button>
+<button class="btn" onclick="send('door')">🚪 Driver door open</button>
+<button class="btn" onclick="send('gear')">⏪ Gear = R</button>
+<button class="btn" onclick="send('fuel')">⛽ Fuel = 10 %</button>
+<button class="btn" onclick="send('call')">📞 Incoming call</button>
+<button class="btn alt" id="gwb" onclick="toggleGw()">💥 Break the gateway</button>
+</div>
+<div class="result" id="netres">Click a button above…</div>
+
+<!-- ============ CAN LAB ============ -->
+<h2 id="canlab">🔢 CAN message lab – read a message like a tester</h2>
+<div class="card">
+<p><b>A CAN message has 2 main parts:</b></p>
+<p><span class="frame">0x3F0 &nbsp;[17 70]</span> → <b>ID</b> <code>0x3F0</code> (what it is about) + <b>data bytes</b> <code>17 70</code> (the value).</p>
+<p><b>Hex in 30 seconds:</b> normal numbers use 10 digits (0–9). <b>Hex</b> uses 16: <code>0 1 2 3 4 5 6 7 8 9 A B C D E F</code> where A=10, B=11 … F=15. "0x" just means "this is hex". Two hex digits = 1 byte = 0 to 255.</p>
+<p><b>Easy method:</b> <code>0x1A</code> = 1×16 + 10 = <b>26</b>. &nbsp; <code>0xFF</code> = 15×16 + 15 = <b>255</b>.</p>
+<p><b>The DBC "dictionary"</b> tells you: which bytes, then <b>value = raw × factor + offset</b>, and the unit.</p>
+<div class="row" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">🧮 <b>Try the hex converter:</b> <input type="text" id="hx" value="1770" style="width:100px;padding:7px;border-radius:6px;border:1px solid var(--line);background:var(--bg);color:var(--ink)" oninput="hexConv()"> <span id="hxo"></span></div>
+<div id="hxbits"></div>
+</div>
+<div id="labs"></div>
+
+<!-- ============ BUSES ============ -->
+<h2 id="buses">🛣️ Car networks – simple comparison</h2>
+<table>
+<tr><th>Network</th><th>Think of it as…</th><th>Speed</th><th>Used for</th></tr>
+<tr><td><b>CAN</b></td><td>A busy town road – everyone shares it, important messages get priority</td><td>up to 1 Mbit/s (often 500 kbit/s)</td><td>Engine, brakes, doors, speed, gear – most signals</td></tr>
+<tr><td><b>CAN FD</b></td><td>The same road with bigger trucks</td><td>up to ~5–8 Mbit/s, 64 bytes per message</td><td>Newer cars, more data</td></tr>
+<tr><td><b>LIN</b></td><td>A small village lane – cheap and slow</td><td>~20 kbit/s</td><td>Window switches, seats, mirrors, rain sensor, steering wheel buttons</td></tr>
+<tr><td><b>FlexRay</b></td><td>A train with a fixed timetable – very predictable</td><td>10 Mbit/s</td><td>Safety systems (older premium cars)</td></tr>
+<tr><td><b>Automotive Ethernet</b></td><td>A highway</td><td>100 Mbit/s – 10 Gbit/s</td><td>Cameras, big screens, OTA updates, IVI ↔ cluster</td></tr>
+<tr><td><b>Bluetooth / Wi-Fi / USB</b></td><td>Doors to the outside world</td><td>—</td><td>Phone, CarPlay/Android Auto, media</td></tr>
+</table>
+<div class="tip">💡 <b>CAN priority rule:</b> the <b>lower</b> the ID number, the <b>higher</b> the priority. If two ECUs talk at the same time, the lower ID wins. (Interview favourite!)</div>
+
+<!-- ============ V MODEL ============ -->
+<h2 id="vmodel">✔️ The V-model (click each box)</h2>
+<p>Car companies love the V-model. <b>Left side</b> = planning and building, going down. <b>Right side</b> = testing, going up. Each test level <b>checks</b> the box opposite to it.</p>
+<div class="svgwrap"><svg id="vsvg" viewBox="0 0 800 330" style="cursor:pointer"></svg></div>
+<div class="panel" id="vinfo">👆 Click a box to see what it means and who does it.</div>
+
+<!-- ============ LEVELS ============ -->
+<h2 id="levels">🧪 MIL → SIL → HIL → Vehicle (test levels)</h2>
+<p>Think of training a pilot: first a <b>drawing</b> of the plane, then a <b>video game</b>, then a <b>real cockpit in a simulator</b>, then the <b>real plane</b>.</p>
+<div class="step" id="lvl"></div>
+<div class="panel" id="lvlinfo"></div>
+
+<!-- ============ BENCH ============ -->
+<h2 id="bench">🖥️ What an HMI test bench looks like</h2>
+<p>Most HMI testing is done on a <b>bench</b> (a desk with the real car screens, powered and connected to a laptop) – not in a real car.</p>
+<div class="svgwrap"><svg viewBox="0 0 820 300">
+<g font-size="13" text-anchor="middle">
+<rect x="20" y="110" width="170" height="90" rx="10" fill="#334155"/><text x="105" y="135" fill="#fff" font-weight="700">💻 Your laptop</text><text x="105" y="155" fill="#cbd5e1" font-size="11">CANoe / sim tool</text><text x="105" y="170" fill="#cbd5e1" font-size="11">ADB + logcat, DLT viewer</text><text x="105" y="185" fill="#cbd5e1" font-size="11">Jira, test runner</text>
+<rect x="260" y="125" width="130" height="60" rx="10" fill="#0891b2"/><text x="325" y="150" fill="#fff" font-weight="700">CAN interface</text><text x="325" y="168" fill="#cffafe" font-size="11">e.g. Vector VN box</text>
+<rect x="470" y="40" width="150" height="70" rx="10" fill="#1d4ed8"/><text x="545" y="70" fill="#fff" font-weight="700">Cluster</text><text x="545" y="90" fill="#dbeafe" font-size="11">behind-wheel display</text>
+<rect x="470" y="200" width="150" height="70" rx="10" fill="#7c3aed"/><text x="545" y="230" fill="#fff" font-weight="700">IVI head unit</text><text x="545" y="250" fill="#ede9fe" font-size="11">+ touch screen</text>
+<rect x="680" y="125" width="125" height="60" rx="10" fill="#b45309"/><text x="742" y="150" fill="#fff" font-weight="700">⚡ Power supply</text><text x="742" y="168" fill="#fef3c7" font-size="11">12 V, KL30 / KL15</text>
+<rect x="690" y="235" width="110" height="45" rx="10" fill="#475569"/><text x="745" y="262" fill="#fff">📱 Phone, USB</text>
+<g stroke="#64748b" stroke-width="3" fill="none"><line x1="190" y1="155" x2="260" y2="155"/><path d="M390,155 H430 V75 H470"/><path d="M430,155 V235 H470"/><path d="M680,155 H650 V75 H620"/><path d="M650,155 V235 H620"/><line x1="690" y1="257" x2="620" y2="250" stroke-dasharray="5 4"/>
+<path d="M105,200 V285 H545 V270" stroke="#22c55e" stroke-dasharray="6 4"/></g>
+<text x="225" y="146" font-size="11" fill="#64748b">USB</text><text x="440" y="120" font-size="11" fill="#64748b" text-anchor="start">CAN</text><text x="320" y="298" font-size="11" fill="#16a34a">ADB cable (logs, screenshots)</text>
+</g></svg></div>
+<div class="tip">On this bench, your laptop <b>pretends to be the rest of the car</b> (sends speed, gear, door signals). That is exactly the "simulation tools used for Car HMI signal simulation" in the JD.</div>
+
+<!-- ============ DIAG ============ -->
+<h2 id="diag">🩺 Diagnostics – UDS and DTC (error codes)</h2>
+<div class="card">
+<p><b>Simple idea:</b> Every ECU keeps a small notebook of problems it saw (<b>DTCs</b>). A diagnostic tool can "ask" the ECU questions using a standard language called <b>UDS</b>: "What is your software version?", "Which errors do you have?", "Clear your errors".</p>
+<table><tr><th>UDS request (hex)</th><th>Simple meaning</th><th>When a tester uses it</th></tr>
+<tr><td><code>0x10</code></td><td>Change session (normal / extended / programming)</td><td>Before special commands</td></tr>
+<tr><td><code>0x22</code></td><td>Read data – e.g. software version</td><td>Check the right build is flashed ✅ (very common)</td></tr>
+<tr><td><code>0x19</code></td><td>Read DTCs (error codes)</td><td>After a test – did any errors get stored? ✅</td></tr>
+<tr><td><code>0x14</code></td><td>Clear DTCs</td><td>Before a test – start clean ✅</td></tr>
+<tr><td><code>0x11</code></td><td>Reset the ECU</td><td>Restart tests</td></tr>
+<tr><td><code>0x2E</code></td><td>Write data (e.g. a setting / variant)</td><td>Configure the ECU</td></tr>
+<tr><td><code>0x27</code></td><td>Security access (unlock)</td><td>Before writing / flashing</td></tr>
+<tr><td><code>0x34/0x36/0x37</code></td><td>Download software (flashing)</td><td>Installing a new build</td></tr>
+<tr><td><code>0x3E</code></td><td>Tester present ("I'm still here")</td><td>Keeps a session alive</td></tr></table>
+<p>You don't need to memorise all of these. Remember <b>0x22 read version</b>, <b>0x19 read errors</b>, <b>0x14 clear errors</b>. A positive answer = request + 0x40 (e.g. 0x22 → <b>0x62</b>); a negative answer starts with <b>0x7F</b>.</p>
+</div>
+<div class="ex"><b>🔎 DTC decoder</b> – type a code like <code>P0301</code>, <code>U0100</code>, <code>B1000</code>, <code>C0035</code>:
+<div style="margin-top:8px"><input type="text" id="dtc" value="U0100" oninput="dtcDec()" style="width:120px;padding:7px;border-radius:6px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-family:Consolas;font-size:16px"></div>
+<div id="dtco" style="margin-top:8px"></div></div>
+
+<!-- ============ TELLTALES ============ -->
+<h2 id="tell">🚨 Warning light (telltale) colours – mini game</h2>
+<p><b>Rule:</b> 🔴 <b>Red</b> = danger, act now / stop safely. 🟠 <b>Amber/yellow</b> = warning, check soon. 🟢 <b>Green</b> = a system is ON / working. 🔵 <b>Blue</b> = high beam ON. (Exact colours can vary a little by car maker.) Pick the colour for each light:</p>
+<div class="card" id="ttgame"></div>
+<div id="ttscore" style="font-weight:700"></div>
+
+<!-- ============ FEATURES ============ -->
+<h2 id="feat">🎵 IVI / HMI features explorer – what to test in each</h2>
+<p>Click a feature. You get: what it is, test ideas, and common bugs. Great for questions like <i>"How would you test the radio?"</i></p>
+<div class="cards" id="fcards"></div>
+<div class="panel" id="finfo" style="margin-top:10px">👆 Click a feature.</div>
+
+<!-- ============ BT ============ -->
+<h2 id="bt">📶 Bluetooth profiles (which "language" for which job)</h2>
+<table><tr><th>Profile</th><th>Simple meaning</th><th>Example test</th></tr>
+<tr><td><b>HFP</b> (Hands-Free)</td><td>Phone calls through car speakers + mic</td><td>Make/receive/reject call, call audio clear, mic works</td></tr>
+<tr><td><b>A2DP</b></td><td>Music streaming from phone</td><td>Play music, audio quality, no stutter</td></tr>
+<tr><td><b>AVRCP</b></td><td>Remote control + song info</td><td>Play/pause/next from car; title/artist shown</td></tr>
+<tr><td><b>PBAP</b> (Phone Book)</td><td>Contacts + call history copied to car</td><td>Contacts sync, names with special characters, 2000+ contacts</td></tr>
+<tr><td><b>MAP</b> (Message Access)</td><td>Read/send SMS on car screen</td><td>New SMS notification, read aloud</td></tr></table>
+<div class="ex"><b>Quick check – which profile?</b><div id="btq"></div></div>
+
+<!-- ============ POWER ============ -->
+<h2 id="power">🔑 Power modes – what happens when you turn the key</h2>
+<p>Click each step. Many real HMI bugs happen <b>during changes</b> between these states.</p>
+<div class="timeline" id="pwr"></div>
+<div class="panel" id="pwrinfo" style="margin-top:8px"></div>
+
+<!-- ============ STANDARDS ============ -->
+<h2 id="std">📜 Safety &amp; standards (simple words)</h2>
+<div class="grid">
+<div class="card"><h3>ISO 26262 – Functional safety</h3><p>Makes sure <b>electronic failures don't hurt people</b>. Each function gets a risk level called <b>ASIL</b>:</p>
+<div class="ladder"><div style="background:#64748b;height:40px">QM</div><div style="background:#16a34a;height:60px">A</div><div style="background:#ca8a04;height:80px">B</div><div style="background:#ea580c;height:100px">C</div><div style="background:#dc2626;height:120px">D</div></div>
+<p style="font-size:14px">QM = normal quality, not safety-related (e.g. radio). D = most critical (e.g. brakes, steering). Cluster speed and key warning lights are usually rated in the low-to-middle range (often A or B). The exact level is decided by the car maker's safety analysis.</p>
+<p><b>Why a tester cares:</b> higher ASIL = stricter testing, more documents, more evidence.</p></div>
+<div class="card"><h3>ASPICE – Process quality</h3><p>A rule book for <b>how</b> software is built and tested. Auditors check: Are requirements written? Is every requirement tested? Are results recorded? Can we <b>trace</b> requirement → test → result → defect?</p><p><b>Tester's part:</b> follow the process, link tests to requirements, keep clean execution records and reports. (The JD says "follow defined testing processes, quality standards and documentation" – this is it.)</p></div>
+<div class="card"><h3>AUTOSAR</h3><p>A <b>common building standard</b> for ECU software so parts from different companies fit together, like LEGO bricks. Testers rarely touch it directly – just know the name.</p></div>
+<div class="card"><h3>HMI-specific guidelines</h3><ul><li><b>ISO 15008</b>: display readability – text size, contrast, brightness.</li><li><b>ISO 2575</b>: standard symbols for warning lights.</li><li><b>Driver distraction (NHTSA / similar)</b>: glance ≤ 2 s, a task ≤ 12 s total → lock typing / video while driving.</li></ul></div>
+</div>
+
+<!-- ============ LOGS ============ -->
+<h2 id="logs">📄 Which log should I check? (click the problem)</h2>
+<div class="cards" id="lcards"></div>
+<div class="panel" id="linfo" style="margin-top:10px">👆 Click a problem type.</div>
+<div class="tip warn">⏱️ <b>Time sync tip:</b> different logs have different clocks. Write down the <b>exact time</b> you saw the bug and note the time in each log, so developers can line them up.</div>
+
+<!-- ============ TOOLS ============ -->
+<h2 id="tools">🧰 Tools you may hear in the interview</h2>
+<table><tr><th>Tool</th><th>What it is (simple)</th><th>What to say if you haven't used it</th></tr>
+<tr><td>Vector <b>CANoe</b></td><td>Simulate the car + send/watch signals</td><td>"I know the concept – sending signals and checking HMI reaction. I'd pick it up quickly."</td></tr>
+<tr><td>Vector <b>CANalyzer</b></td><td>Watch and analyse network traffic</td><td>"Used to read traces, like a CAN log viewer."</td></tr>
+<tr><td>PCAN / Busmaster</td><td>Cheaper CAN tools to send/read</td><td>Same idea</td></tr>
+<tr><td><b>vTESTstudio</b> / <b>ECU-TEST</b></td><td>Make + run automated tests on benches</td><td>"I can run suites and analyse reports."</td></tr>
+<tr><td><b>dSPACE</b> / NI HIL</td><td>Big HIL simulators</td><td>"Bench that pretends to be the car."</td></tr>
+<tr><td>DLT Viewer</td><td>Read ECU logs (DLT format)</td><td>"Like logcat for automotive ECUs."</td></tr>
+<tr><td>ADB / logcat / Android Studio</td><td>Android logs and debugging</td><td>You've used ADB + logcat ✅</td></tr>
+<tr><td>Jira (+ Xray / Zephyr)</td><td>Defects + test management</td><td>You've used Jira ✅</td></tr>
+<tr><td><b>Polarion</b> / <b>DOORS</b> / HP ALM / TestRail</td><td>Requirements and test case management</td><td>"Similar to Jira test management; I'll adapt."</td></tr>
+<tr><td>Jenkins</td><td>Runs test suites automatically</td><td>Basic experience ✅</td></tr>
+<tr><td>Python / Robot Framework / Appium</td><td>Automation scripting</td><td>Python basics ✅</td></tr>
+<tr><td>Wireshark</td><td>Watch Ethernet/Wi-Fi packets</td><td>"Like a trace for Ethernet."</td></tr></table>
+
+<!-- ============ RTM ============ -->
+<h2 id="rtm">🔗 Traceability – the chain auditors love</h2>
+<div class="svgwrap"><svg viewBox="0 0 820 90"><g font-size="13" text-anchor="middle" font-weight="700">
+<rect x="10" y="20" width="170" height="50" rx="10" fill="#2563eb"/><text x="95" y="50" fill="#fff">Requirement R5</text>
+<rect x="220" y="20" width="170" height="50" rx="10" fill="#0891b2"/><text x="305" y="50" fill="#fff">Test case TC_CL_07</text>
+<rect x="430" y="20" width="170" height="50" rx="10" fill="#d97706"/><text x="515" y="50" fill="#fff">Result: FAIL (build 0.9)</text>
+<rect x="640" y="20" width="170" height="50" rx="10" fill="#dc2626"/><text x="725" y="50" fill="#fff">Defect HMI-1234</text>
+<g stroke="#64748b" stroke-width="3"><line x1="180" y1="45" x2="220" y2="45"/><line x1="390" y1="45" x2="430" y2="45"/><line x1="600" y1="45" x2="640" y2="45"/></g></g></svg></div>
+<table><tr><th>Requirement</th><th>Test cases</th><th>Last result</th><th>Defect</th></tr>
+<tr><td>R3 Seatbelt warning</td><td>TC_CL_03, TC_CL_04</td><td>✅ Pass</td><td>—</td></tr>
+<tr><td>R5 Door warning while driving</td><td>TC_CL_07</td><td>❌ Fail</td><td>HMI-1234</td></tr>
+<tr><td>R17 Keyboard lock while driving</td><td>TC_IV_05</td><td>⛔ Blocked</td><td>HMI-1240 (Nav app crashes)</td></tr>
+<tr><td>R21 German translation</td><td>—</td><td>⚠ Not covered!</td><td>—</td></tr></table>
+<p>This table is an <b>RTM</b> (Requirement Traceability Matrix). It quickly shows <b>gaps</b> – like R21 with no test.</p>
+
+<!-- ============ DAY ============ -->
+<h2 id="dayin">📅 A typical day as an HMI test engineer</h2>
+<div class="day">
+<div><b>9:30</b> – Check new build arrived. Flash/install it on the bench. Read software version (UDS 0x22 or Settings → About).</div>
+<div><b>10:00</b> – Smoke test: power on, screens start, main apps open, signals react.</div>
+<div><b>10:30</b> – Start the automation suite (customer's tool). While it runs, do manual test cases.</div>
+<div><b>12:00</b> – Daily stand-up / sync with customer proxy team: yesterday, today, blockers.</div>
+<div><b>14:00</b> – Automation finished. Analyse failures: environment? script? real bug? Re-run flaky ones.</div>
+<div><b>15:00</b> – Reproduce real failures manually, collect logs (logcat, DLT, CAN trace), video. Raise defects with impact.</div>
+<div><b>16:30</b> – Retest fixed defects, close or reopen. Regression around the fix.</div>
+<div><b>17:30</b> – Update execution records and send the daily test report.</div>
+</div>
+</main>
+<script src="nav.js"></script>
+<script>
+function $(i){return document.getElementById(i)}
+/* ---------- NETWORK ANIMATION ---------- */
+var gwOk=true,busy=false;
+var SRC={eng:70,abs:185,body:300,tcu:415},DST={cl:650,ivi:757};
+var MSG={
+ speed:{s:'abs',d:['cl'],f:'0x3F0  [17 70]  VehicleSpeed  = 0x1770 = 6000 × 0.01 = 60 km/h',r:'Cluster shows: 60 km/h ✔'},
+ door:{s:'body',d:['cl','ivi'],f:'0x350  [01]     DoorStatus    = driver door OPEN',r:'Cluster: DOOR telltale ON ✔   IVI: "Driver door open" pop-up ✔'},
+ gear:{s:'tcu',d:['ivi'],f:'0x2A0  [01]     GearPosition  = 1 = R',r:'IVI: rear camera opens ✔'},
+ fuel:{s:'eng',d:['cl'],f:'0x4B0  [0A]     FuelLevel     = 10 %',r:'Cluster: LOW FUEL telltale ON ✔'},
+ call:{s:'phone',d:['ivi'],f:'(Not CAN!) Bluetooth HFP: "incoming call from Rahul"',r:'IVI: incoming call screen ✔  (Bluetooth does not go through the gateway)'}
+};
+function toggleGw(){gwOk=!gwOk;$('gw').setAttribute('fill',gwOk?'#0891b2':'#dc2626');$('gwt').textContent=gwOk?'working ✔':'BROKEN ✖';$('gwb').textContent=gwOk?'💥 Break the gateway':'🔧 Repair the gateway'}
+function anim(dot,pts,cb){dot.style.display='block';var seg=[],tot=0;for(var i=1;i<pts.length;i++){var l=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]);seg.push(l);tot+=l}var t0=Date.now(),dur=tot*3;function f(){var t=Date.now();var d=Math.min(1,(t-t0)/dur)*tot,k=0;while(k<seg.length-1&&d>seg[k]){d-=seg[k];k++}var p=pts[k],q=pts[k+1],r=seg[k]?Math.min(1,d/seg[k]):1;dot.setAttribute('cx',p[0]+(q[0]-p[0])*r);dot.setAttribute('cy',p[1]+(q[1]-p[1])*r);if(t-t0<dur)setTimeout(f,16);else cb&&cb()}f()}
+function send(k){if(busy)return;busy=true;var m=MSG[k],out=$('netres'),d1=$('dot'),d2=$('dot2');out.textContent='Sending…\nCAN trace: '+m.f;
+ if(m.s==='phone'){anim(d1,[[720,275],[775,250],[790,180],[790,112]],function(){d1.style.display='none';out.textContent='Message: '+m.f+'\n\nResult → '+m.r;busy=false});return}
+ var x=SRC[m.s];anim(d1,[[x,110],[x,190],[530,190]],function(){
+  if(!gwOk){d1.style.display='none';out.textContent='CAN trace (powertrain side): '+m.f+'  ✔ SENT\nCAN trace (infotainment side): — nothing —  ✖ NOT RECEIVED\n\nResult → screen did NOT change ❌\n\n🧠 Tester thinking: "The ECU sent the signal (I see it in the first trace), but it never reached the screen side. So the problem is between – likely the gateway (routing). Not the HMI app." → Put BOTH traces in the defect.';busy=false;return}
+  var n=m.d.length,done=0;m.d.forEach(function(dd,i){var dot=i?d2:d1;anim(dot,[[530,190],[DST[dd],190],[DST[dd],110]],function(){dot.style.display='none';if(++done===n){out.textContent='CAN trace: '+m.f+'\n\nResult → '+m.r;busy=false}})})})}
+
+/* ---------- HEX ---------- */
+function hexConv(){var v=$('hx').value.replace(/^0x/i,'').trim();if(!/^[0-9a-f]+$/i.test(v)||v.length>8){$('hxo').innerHTML='<span class="no">only 0-9 and A-F please</span>';$('hxbits').innerHTML='';return}var n=parseInt(v,16);var digits=v.toUpperCase().split('');var expl=digits.map(function(d,i){return parseInt(d,16)+'×16<sup>'+(digits.length-1-i)+'</sup>'}).join(' + ');$('hxo').innerHTML='= <b style="font-size:20px">'+n+'</b> (decimal) &nbsp; <small>'+expl+'</small>';
+ if(v.length<=4){var b=n.toString(2).padStart(v.length*4,'0');$('hxbits').innerHTML='Bits: <span class="bits">'+b.split('').map(function(x){return '<span class="'+(x==='1'?'on':'')+'">'+x+'</span>'}).join('')+'</span>'}else $('hxbits').innerHTML=''}
+hexConv();
+
+/* ---------- CAN LABS ---------- */
+var LABS=[
+{t:'1. Speed',f:'0x3F0 [17 70]',dbc:'ID 0x3F0 = VehicleSpeed. Bytes 0–1, factor 0.01, unit km/h.',q:'What speed is this?',a:60,u:'km/h',steps:'Join the two bytes: 0x1770 → 1×4096 + 7×256 + 7×16 + 0 = 6000. Multiply by factor 0.01 → <b>60 km/h</b>.'},
+{t:'2. Fuel',f:'0x4B0 [0F]',dbc:'ID 0x4B0 = FuelLevel. Byte 0, factor 1, unit %.',q:'Fuel level in %?',a:15,u:'%',steps:'0x0F = 0×16 + 15 = <b>15 %</b>. If the requirement says "warning below 15 %", is the warning ON? → No (15 is not below 15). That is a boundary test!'},
+{t:'3. Coolant temperature',f:'0x5C0 [5A]',dbc:'ID 0x5C0 = CoolantTemp. Byte 0, factor 1, offset −40, unit °C.',q:'Temperature in °C?',a:50,u:'°C',steps:'0x5A = 5×16 + 10 = 90. Then 90 × 1 + (−40) = <b>50 °C</b>. Offsets let one byte show negative temperatures.'},
+{t:'4. Gear',f:'0x2A0 [03]',dbc:'ID 0x2A0 = GearPosition. Byte 0: 0 = P, 1 = R, 2 = N, 3 = D.',q:'Which gear? (type P, R, N or D)',a:'D',u:'',steps:'0x03 = 3 → table says 3 = <b>D</b>. These "value tables" are also in the DBC.'},
+{t:'5. Doors (bits!)',f:'0x350 [05]',dbc:'ID 0x350 = DoorStatus. Bit 0 = driver, bit 1 = passenger, bit 2 = rear-left, bit 3 = rear-right (1 = open).',q:'How many doors are open?',a:2,u:'doors',steps:'0x05 = 5 = binary <b>0101</b>. Read from the right: bit0 = 1 (driver OPEN), bit1 = 0, bit2 = 1 (rear-left OPEN), bit3 = 0 → <b>2 doors</b>. One byte can carry 8 on/off signals!'}
+];
+$('labs').innerHTML=LABS.map(function(L,i){return '<div class="ex"><b>'+L.t+'</b> &nbsp; <span class="frame">'+L.f+'</span><div style="font-size:14px;color:var(--muted);margin:6px 0">📖 DBC says: '+L.dbc+'</div>'+L.q+' <input type="text" id="la'+i+'" onkeydown="if(event.key===\'Enter\')chk('+i+')"> '+L.u+' <button class="btn" onclick="chk('+i+')">Check</button> <button class="btn alt" onclick="$(\'ls'+i+'\').style.display=\'block\'">Show steps</button><div id="lr'+i+'" style="margin-top:6px"></div><div id="ls'+i+'" style="display:none;margin-top:6px" class="tip">'+L.steps+'</div></div>'}).join('');
+function chk(i){var L=LABS[i],v=$('la'+i).value.trim(),ok=typeof L.a==='number'?parseFloat(v)===L.a:v.toUpperCase()===L.a;$('lr'+i).innerHTML=ok?'<span class="ok">✔ Correct! Well done.</span>':'<span class="no">✖ Not yet. Try again or click "Show steps".</span>';if(ok)$('ls'+i).style.display='block'}
+
+/* ---------- V MODEL ---------- */
+var V=[
+{id:'req',x:20,y:20,l:'Customer requirements',p:'acc',i:'What the car company wants: "Show a door warning when a door is open." Written in tools like DOORS / Polarion.'},
+{id:'sys',x:80,y:95,l:'System requirements',p:'syst',i:'More exact: "Door telltale ON within 200 ms when DoorStatus = 1 and KL15 = ON." Testers READ these to write test cases.'},
+{id:'arch',x:140,y:170,l:'Architecture design',p:'int',i:'Which ECUs/apps do what, and which signals connect them.'},
+{id:'mod',x:200,y:245,l:'Module design',p:'unit',i:'Detailed design of each small software part.'},
+{id:'code',x:320,y:280,l:'Coding',p:null,i:'Developers write the code. Bottom of the V.'},
+{id:'unit',x:440,y:245,l:'Unit testing',p:'mod',i:'Developers test small code parts alone. Checks the module design.'},
+{id:'int',x:500,y:170,l:'Integration testing',p:'arch',i:'⭐ Checks parts work TOGETHER – e.g. Body ECU signal → gateway → cluster. HMI testers often do this with signal simulation.'},
+{id:'syst',x:560,y:95,l:'System testing',p:'sys',i:'⭐ YOUR MAIN LEVEL. Test the full HMI system against system requirements on a bench: manual + automated test cases.'},
+{id:'acc',x:620,y:20,l:'Acceptance testing',p:'req',i:'Customer checks the product meets what they wanted (often in real cars, test drives).'}
+];
+(function(){var s='',w=160,h=46;V.forEach(function(b){var p=V.filter(function(o){return o.id===b.p})[0];if(p&&b.x<p.x)s+='<line x1="'+(b.x+w)+'" y1="'+(b.y+h/2)+'" x2="'+p.x+'" y2="'+(p.y+h/2)+'" stroke="#94a3b8" stroke-dasharray="6 5" stroke-width="2"/>'});
+ V.forEach(function(b){var star=(b.id==='syst'||b.id==='int');s+='<g data-v="'+b.id+'"><rect id="v-'+b.id+'" x="'+b.x+'" y="'+b.y+'" width="'+w+'" height="'+h+'" rx="10" fill="'+(b.x<300?'#2563eb':b.id==='code'?'#475569':'#16a34a')+'" stroke="'+(star?'#f59e0b':'none')+'" stroke-width="4"/><text x="'+(b.x+w/2)+'" y="'+(b.y+28)+'" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">'+(star?'⭐ ':'')+b.l+'</text></g>'});
+ s+='<text x="40" y="320" font-size="13" fill="#2563eb" font-weight="700">◀ Define &amp; build</text><text x="780" y="320" font-size="13" fill="#16a34a" font-weight="700" text-anchor="end">Test &amp; verify ▶</text>';
+ $('vsvg').innerHTML=s;$('vsvg').addEventListener('click',function(e){var g=e.target.closest('[data-v]');if(!g)return;var b=V.filter(function(o){return o.id===g.dataset.v})[0];V.forEach(function(o){$('v-'+o.id).setAttribute('opacity',(o.id===b.id||o.id===b.p)?1:.35)});var p=V.filter(function(o){return o.id===b.p})[0];$('vinfo').innerHTML='<b>'+b.l+'</b><br>'+b.i+(p?'<br><br>↔ Paired with: <b>'+p.l+'</b> (dashed line)':'')})})();
+
+/* ---------- LEVELS ---------- */
+var LV=[
+['MIL','Model-in-the-Loop','✈️ Like a drawing of the plane','Engineers test a math model / diagram (e.g. in Simulink) of the software before code exists.','Rarely – mostly engineers.'],
+['SIL','Software-in-the-Loop','🎮 Like a flight video game with the real autopilot code','The real code runs on a normal PC; the car is simulated. Fast and cheap; no hardware.','Sometimes – e.g. HMI app on an emulator.'],
+['HIL','Hardware-in-the-Loop','🛩️ Like a real cockpit inside a flight simulator','The REAL IVI/cluster box is on a bench; a simulator (CANoe, dSPACE) pretends to be the rest of the car by sending signals.','⭐ MOST of your work: bench testing with signal simulation.'],
+['Vehicle','Real car','🛫 The real plane','Testing inside a real car, parked or driving. Needed for real-world behaviour (GPS, sunlight on screen, noise for voice).','Sometimes – final checks, test drives.']];
+$('lvl').innerHTML=LV.map(function(l,i){return '<button onclick="lvl('+i+')" id="lv'+i+'">'+l[0]+'</button>'}).join('<span style="align-self:center">→</span>');
+function lvl(i){LV.forEach(function(_,j){$('lv'+j).classList.toggle('on',i===j)});var l=LV[i];$('lvlinfo').innerHTML='<b>'+l[0]+' = '+l[1]+'</b><br>'+l[2]+'<br><br>'+l[3]+'<br><br><b>Do HMI testers do this?</b> '+l[4]}
+lvl(2);
+
+/* ---------- DTC ---------- */
+function dtcDec(){var c=$('dtc').value.trim().toUpperCase(),o=$('dtco');if(!/^[PCBU][0-3][0-9A-F]{3}$/.test(c)){o.innerHTML='<span class="no">Format: 1 letter (P/C/B/U) + 4 characters, e.g. P0301</span>';return}
+ var L={P:'Powertrain (engine, gearbox)',C:'Chassis (brakes, steering, suspension)',B:'Body (doors, seats, airbags, lights, HMI)',U:'Network / communication (CAN messages missing!)'}[c[0]];
+ var G={0:'Generic (same meaning in every car – standard)',1:'Manufacturer-specific (meaning defined by the car maker)',2:'Generic (P) / maker-specific (others)',3:'Mixed / reserved'}[c[1]];
+ var known={P0301:'Cylinder 1 misfire detected',U0100:'Lost communication with engine control module (ECM) – messages from the engine ECU stopped arriving',U0155:'Lost communication with the instrument cluster',U0184:'Lost communication with the radio / infotainment',C0035:'Left front wheel speed sensor circuit',B1000:'ECU internal fault (maker-specific meaning)',P0500:'Vehicle speed sensor malfunction'}[c];
+ o.innerHTML='<table><tr><td><b>'+c[0]+'</b></td><td>'+L+'</td></tr><tr><td><b>'+c[1]+'</b></td><td>'+G+'</td></tr><tr><td><b>'+c.slice(2)+'</b></td><td>Which exact fault (sub-system + number)</td></tr></table>'+(known?'<p>📖 <b>Meaning:</b> '+known+'</p>':'<p style="color:var(--muted)">Try also: P0301, U0155, U0184, C0035, P0500</p>')+(c[0]==='U'?'<div class="tip">💡 <b>U-codes matter to HMI testers:</b> if the cluster shows "---" or a warning stays stuck, a U-code may show that a CAN message stopped arriving.</div>':'')}
+dtcDec();
+
+/* ---------- TELLTALES ---------- */
+var TT=[['🔒 Seatbelt not fastened','red'],['⛽ Low fuel','amb'],['🔧 Check engine','amb'],['💡 High beam ON','blu'],['↔️ Turn indicator','grn'],['🅿️ Brake / parking brake fault','red'],['🎈 Airbag fault','red'],['🛞 Low tyre pressure','amb'],['🚗 Cruise control active','grn'],['🛢️ Engine oil pressure low','red'],['🔋 Battery not charging','red'],['🚪 Door open','red'],['🌫️ Front fog lamps ON','grn'],['ABS fault','amb']];
+var COL={red:['Red','c-red'],amb:['Amber','c-amb'],grn:['Green','c-grn'],blu:['Blue','c-blu']},ttS=0,ttN=0;
+$('ttgame').innerHTML=TT.map(function(t,i){return '<div class="tt"><span class="nm">'+t[0]+'</span>'+Object.keys(COL).map(function(c){return '<button class="cb '+COL[c][1]+'" onclick="tt('+i+',\''+c+'\',this)">'+COL[c][0]+'</button>'}).join('')+'<span id="tr'+i+'"></span></div>'}).join('');
+function tt(i,c,b){var r=$('tr'+i);if(r.dataset.done)return;r.dataset.done=1;ttN++;var ok=TT[i][1]===c;if(ok)ttS++;r.innerHTML=ok?'<span class="ok">✔</span>':'<span class="no">✖ it is '+COL[TT[i][1]][0]+'</span>';$('ttscore').textContent='Score: '+ttS+' / '+ttN+(ttN===TT.length?' – done!':'')}
+
+/* ---------- FEATURES ---------- */
+var F={
+'📻 Radio (FM/AM/DAB)':['Live radio. FM/AM = classic; DAB = digital. RDS shows station name and song.','Tune/seek up & down; save & recall presets; station name (RDS) shown; switch bands; weak signal area; radio resumes after ignition cycle; volume per source; traffic announcements interrupt.','Wrong station name, presets lost after restart, noise not muted when seeking, crash on band switch.'],
+'💾 USB media':['Play songs/videos from a USB stick.','Different formats (MP3, AAC, FLAC, WAV); big library (5000+ songs); deep folders; special characters in names; unplug while playing; plug in while driving; empty USB; corrupted file; album art; shuffle/repeat.','Freeze with big library, crash on unplug, wrong song order, album art of the wrong song, garbled (??) names.'],
+'📞 Bluetooth phone':['Phone calls through the car (HFP) + contacts (PBAP).','Pair new phone; auto-reconnect after ignition ON; 2 phones; make/receive/reject/end call; call from steering wheel; contacts sync; search contacts; call history; call while music playing; phone battery dies during call; airplane mode.','Pairing fails, contacts missing, caller name not shown, call audio one-way, music not paused.'],
+'🎧 Bluetooth audio':['Music streaming (A2DP) + control and song info (AVRCP).','Play/pause/next from car and from phone; title/artist/time shown; switch songs fast; switch source USB ↔ BT; phone app changes (Spotify, YouTube Music).','Song info not updated, stutter, audio continues after disconnect, wrong play/pause icon.'],
+'📱 CarPlay / Android Auto':['The phone\'s apps shown on the car screen (wired or wireless).','Connect by USB and wireless; launch time; maps, music, calls, messages; switch back to native screens; disconnect cable while navigating; incoming call; reverse camera interrupts and returns; voice assistant from steering button.','Black screen, audio from wrong source, does not return after camera, slow reconnect.'],
+'🧭 Navigation':['Maps, routes, voice guidance (GNSS position).','Enter destination (address, POI, contacts); route calculation; reroute after wrong turn; GPS loss in a tunnel; voice prompt ducks music; ETA accuracy; day/night map; keyboard lock while driving; turn arrows also shown on cluster.','Wrong ETA, voice prompt too loud/quiet, map not night mode, crash on reroute, lag.'],
+'🎙️ Voice assistant':['Control the car by speaking: "Call Rahul", "Set temperature 22".','Commands in different accents; with road/fan noise; wrong commands; cancel; during music; languages; push-to-talk button on wheel; timeout when silent.','Misunderstands, does not stop music, gets stuck listening, wrong contact called.'],
+'❄️ Climate (AC)':['Temperature, fan, AC, recirculation, defrost – on the screen or buttons.','Min/max temperature; °C/°F; driver/passenger zones; screen matches physical buttons; values remembered after restart; pop-up when using buttons; auto mode.','Screen and real setting differ, units wrong, value out of range, slow update.'],
+'📷 Rear camera':['Camera view when reversing, with guide lines and parking sensors.','Opens every time gear = R; opening time (often required within ~2 s); closes on leaving R; guide lines move with steering; works while in CarPlay/navigation/call; sensor beeps & distance bars; camera unplugged → error message.','Late or no camera, black frame, freezes, does not close, works only first time.'],
+'⬇️ OTA software update':['Updating car software through the internet.','Download over mobile data/Wi-Fi; pause/resume; install only when parked; low battery check; power loss during update; rollback if it fails; version shown after update; release notes.','Stuck at 99 %, car unusable after failure, old version still shown, update starts while driving.'],
+'🔑 Startup & power':['What happens at ignition ON/OFF, sleep and wake.','Time to first screen (boot time); camera ready fast; last source and volume remembered; screen OFF after ignition OFF (or after door open); engine cranking voltage dip; battery low warning.','Long black screen, resets volume to max (dangerous!), crash after cranking.'],
+'🔊 Audio management':['Who gets the speakers when several things want sound.','Navigation prompt while music (ducking); call over everything; parking beeps over music; volume per source; mute; max volume limit at startup.','Prompt not heard, music not restored after call, two sounds mixed loudly.'],
+'⚙️ Settings & profiles':['Language, units, display brightness, themes, user profiles, factory reset.','Every language on every screen; long words; units km/miles, °C/°F; day/night auto; brightness 0 and max; driver profiles switch seat/radio presets; factory reset clears personal data.','Untranslated text, truncated words, settings lost after restart, reset leaves phone data.'],
+'🎛️ Steering wheel controls':['Buttons on the steering wheel (often on LIN).','Each button: volume, next/prev, answer/end call, voice, menu; long press vs short press; works on every source; works while screen shows camera.','Button does wrong action, long press not detected, works only on one source.'],
+'🖥️ Cluster ↔ IVI':['Some info is shared: nav arrows, song name, phone call on the cluster.','Turn-by-turn arrows on cluster match IVI; call name shows on cluster; warnings pop up in correct priority; units match on both screens.','Different values on the two screens, cluster shows old info, pop-up hides an important warning.']
+};
+$('fcards').innerHTML=Object.keys(F).map(function(k,i){return '<button data-f="'+i+'">'+k+'</button>'}).join('');
+$('fcards').onclick=function(e){var b=e.target.closest('button');if(!b)return;var k=Object.keys(F)[b.dataset.f],v=F[k];[].forEach.call($('fcards').children,function(x){x.classList.toggle('on',x===b)});$('finfo').innerHTML='<h3 style="margin-top:0">'+k+'</h3><p><b>What it is:</b> '+v[0]+'</p><p><b>✅ Test ideas:</b></p><ul>'+v[1].split('; ').map(function(s){return '<li>'+s+'</li>'}).join('')+'</ul><p><b>🐞 Common bugs:</b> '+v[2]+'</p>';jargonize($('finfo'))};
+
+/* ---------- BT quiz ---------- */
+var BQ=[['Contacts from the phone appear on the car screen','PBAP'],['Song title and artist show on the screen','AVRCP'],['You talk on a call through the car speakers','HFP'],['Music from Spotify plays through the car','A2DP'],['A new SMS appears and is read aloud','MAP']];
+$('btq').innerHTML=BQ.map(function(q,i){return '<div class="tt"><span class="nm">'+q[0]+'</span>'+['HFP','A2DP','AVRCP','PBAP','MAP'].map(function(p){return '<button class="btn alt" style="padding:4px 8px;font-size:13px" onclick="bq('+i+',\''+p+'\')">'+p+'</button>'}).join(' ')+'<span id="bq'+i+'"></span></div>'}).join('');
+function bq(i,p){$('bq'+i).innerHTML=p===BQ[i][1]?'<span class="ok">✔</span>':'<span class="no">✖ ('+BQ[i][1]+')</span>'}
+
+/* ---------- POWER ---------- */
+var PW=[
+['😴 Sleep','Car locked, only the always-on battery line (KL30) is powered. ECUs sleep to save battery.','Car really goes to sleep (no battery drain); wakes up on unlock.'],
+['🔓 Wake / Accessory','Door unlock or ACC: some systems wake (welcome screen, radio may play).','Welcome animation; radio allowed in accessory mode if spec says so.'],
+['🔑 Ignition ON (KL15)','Ignition line ON: cluster bulb check, IVI boots.','Boot time; bulb check lamps; last source/volume restored; rear camera available quickly.'],
+['⚡ Cranking','Engine starting: battery voltage drops for a moment (e.g. 12 V → 6–8 V).','Screens must not crash or reset badly; audio recovers; no stuck warnings. (Tested with special power supply profiles.)'],
+['🚗 Running / Driving','Normal use. Speed > 0 activates driver-distraction locks.','All features; locks while driving; warnings priority.'],
+['🔑 Ignition OFF','KL15 OFF: cluster off; IVI may stay a short time (e.g. until door opens, or a timer).','Screens go off as required; music stops; call continues if spec allows; settings saved.'],
+['🔋 Low battery','Battery voltage low: system may limit features.','Warning shown; non-essential features off; recovers when voltage is back.']];
+$('pwr').innerHTML=PW.map(function(p,i){return '<button id="pw'+i+'" onclick="pw('+i+')">'+p[0]+'</button>'}).join('');
+function pw(i){PW.forEach(function(_,j){$('pw'+j).classList.toggle('on',i===j)});$('pwrinfo').innerHTML='<b>'+PW[i][0]+'</b><br>'+PW[i][1]+'<br><br><b>✅ What to test:</b> '+PW[i][2];jargonize($('pwrinfo'))}
+pw(2);
+
+/* ---------- LOGS ---------- */
+var LG={
+'📱 IVI app crash / freeze':'<b>logcat</b> (look for FATAL EXCEPTION, ANR) + <code>adb bugreport</code>. Native crash → tombstone files. Add screen video.',
+'🔢 Wrong value on screen':'<b>CAN trace</b> first (CANoe/CANalyzer): was the right value sent? Then <b>app log</b> (logcat/DLT): was it received? If both OK → HMI display bug.',
+'🚨 Cluster warning wrong':'<b>CAN trace</b> + cluster <b>DLT</b> logs. Check DTCs with UDS 0x19.',
+'📶 Bluetooth problem':'<b>logcat</b> (filter "Bluetooth") + <b>btsnoop HCI log</b> (records Bluetooth packets; switch on in Android developer options). Note phone model + OS version.',
+'🐢 Slow / laggy':'Record video with a visible clock/timer; logcat timestamps; measure time from action to reaction; repeat 5 times and write the average.',
+'🔌 Signal never arrives':'CAN traces on BOTH sides of the gateway; check bus load and error frames; check DTCs (U-codes).',
+'🤖 Automation test failed':'Test runner report + screenshots it took + logcat/DLT for that time + was the bench OK? Re-run once to check it is not flaky.'
+};
+$('lcards').innerHTML=Object.keys(LG).map(function(k,i){return '<button data-l="'+i+'">'+k+'</button>'}).join('');
+$('lcards').onclick=function(e){var b=e.target.closest('button');if(!b)return;var k=Object.keys(LG)[b.dataset.l];[].forEach.call($('lcards').children,function(x){x.classList.toggle('on',x===b)});$('linfo').innerHTML='<b>'+k+'</b><br>'+LG[k];jargonize($('linfo'))};
+</script></body></html>
